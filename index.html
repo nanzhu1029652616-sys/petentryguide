@@ -7,116 +7,648 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
 <style>
     :root { --primary: #1a73e8; --text: #202124; --bg: #f8f9fa; }
-    body { font-family: 'Inter', sans-serif; line-height: 1.6; color: var(--text); background: var(--bg); margin: 0; }
-    .hero { background: white; border-bottom: 1px solid #dadce0; padding: 60px 20px; text-align: center; }
-    .hero h1 { font-size: 3.2em; color: #1a0dab; margin-bottom: 10px; }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--bg); margin: 0; }
+    .hero { background: white; padding: 80px 20px 40px; text-align: center; border-bottom: 1px solid #eee; }
+    h1 { font-size: 3.5em; letter-spacing: -0.05em; margin-bottom: 20px; color: #1a0dab; }
     
-    /* 搜索与下拉框容器 */
-    .controls-container { margin: 30px auto; max-width: 700px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-    
-    .search-wrapper { position: relative; flex: 1; min-width: 300px; }
-    #search-input { width: 100%; padding: 15px 45px; border: 1px solid #dadce0; border-radius: 30px; font-size: 1.1em; box-shadow: 0 1px 6px rgba(32,33,36,0.1); outline: none; box-sizing: border-box; }
-    
-    /* 下拉框样式 */
-    #country-select { padding: 0 20px; border: 1px solid #dadce0; border-radius: 30px; background: white; font-size: 1em; color: #5f6368; cursor: pointer; outline: none; box-shadow: 0 1px 6px rgba(32,33,36,0.1); }
+    .search-container { max-width: 600px; margin: 0 auto; position: relative; }
+    #search-input { width: 100%; padding: 18px 30px; border: 1px solid #dfe1e5; border-radius: 30px; font-size: 1.1em; transition: 0.2s; box-shadow: none; outline: none; box-sizing: border-box; }
+    #search-input:hover, #search-input:focus { box-shadow: 0 1px 6px rgba(32,33,36,0.28); border-color: transparent; }
 
-    /* 提示词 Chips 样式 */
-    .search-hints { margin-top: 15px; display: flex; gap: 8px; justify-content: center; font-size: 0.9em; color: #70757a; }
-    .hint-chip { cursor: pointer; color: var(--primary); background: #e8f0fe; padding: 4px 12px; border-radius: 15px; transition: 0.2s; }
-    .hint-chip:hover { background: #d2e3fc; }
+    .filter-bar { display: flex; justify-content: center; gap: 15px; margin-top: 25px; }
+    .filter-btn { padding: 8px 20px; border-radius: 20px; border: 1px solid #dadce0; background: white; cursor: pointer; font-size: 0.9em; transition: 0.2s; }
+    .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-    .nav-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 20px auto; max-width: 1000px; }
-    .tag { background: white; border: 1px solid #dadce0; padding: 8px 16px; border-radius: 20px; text-decoration: none; color: #5f6368; font-size: 0.9em; transition: 0.2s; display: flex; align-items: center; }
-    .tag:hover { border-color: var(--primary); color: var(--primary); }
+    .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
     
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 25px; }
-    .section-title { font-size: 1.8em; margin: 50px 0 25px; display: flex; align-items: center; border-left: 5px solid var(--primary); padding-left: 15px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
-    .card { background: white; border: 1px solid #dadce0; border-radius: 16px; padding: 25px; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: 0.3s; }
-    .card:hover { border-color: var(--primary); box-shadow: 0 10px 25px rgba(26,115,232,0.1); transform: translateY(-3px); }
-    .card h3 { margin: 0 0 10px 0; color: var(--primary); }
-    .card p { margin: 0; font-size: 0.9em; color: #5f6368; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
-    #no-results { text-align: center; padding: 50px; display: none; color: #70757a; }
-    .footer { text-align: center; padding: 80px; margin-top: 50px; border-top: 1px solid #eee; }
+    .card { background: white; border: 1px solid #dadce0; border-radius: 12px; padding: 24px; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: 0.2s; }
+    .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-2px); }
+    
+    /* 语义化标签样式 */
+    .badge-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .badge { font-size: 0.75em; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
+    .badge-dog { background: #e8f0fe; color: #1967d2; }
+    .badge-cat { background: #fef7e0; color: #ea8600; }
+    
+    h3 { margin: 0 0 10px; font-size: 1.2em; line-height: 1.4; color: var(--primary); }
+    p { margin: 0; font-size: 0.9em; color: #5f6368; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    
+    .section-title { font-size: 1.4em; margin: 60px 0 20px; display: flex; align-items: center; color: #70757a; }
+    .fi { margin-right: 10px; border-radius: 2px; }
 </style>
 </head>
 <body>
 <div class="hero">
     <h1>Pet Entry Guide</h1>
-    
-    <div class="controls-container">
-        <div class="search-wrapper">
-            <input type="text" id="search-input" placeholder="Search (e.g., 'China', 'fees')...">
-        </div>
-        
-        <select id="country-select">
-            <option value="">Jump to Country...</option>
-            <option value="Australia">Australia</option><option value="Canada">Canada</option><option value="China">China</option><option value="Europe">Europe</option><option value="Japan">Japan</option><option value="Mexico">Mexico</option><option value="Other Guides">Other Guides</option><option value="Singapore">Singapore</option><option value="South Korea">South Korea</option><option value="USA General">USA General</option><option value="United Kingdom">United Kingdom</option>
-        </select>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search by country or keywords...">
     </div>
-
-    <div class="search-hints">
-        Suggested: 
-        <span class="hint-chip">Dog</span>
-        <span class="hint-chip">Cat</span>
-        <span class="hint-chip">Fee</span>
-        <span class="hint-chip">Microchip</span>
-        <span class="hint-chip">Permit</span>
+    <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterType('all', this)">All</button>
+        <button class="filter-btn" onclick="filterType('dog', this)">Dogs Only</button>
+        <button class="filter-btn" onclick="filterType('cat', this)">Cats Only</button>
     </div>
-
-    <div class="nav-tags"><a href="#Australia" class="tag"><span class="fi fi-au"></span>&nbsp;Australia</a><a href="#Canada" class="tag"><span class="fi fi-ca"></span>&nbsp;Canada</a><a href="#China" class="tag"><span class="fi fi-cn"></span>&nbsp;China</a><a href="#Europe" class="tag"><span class="fi fi-eu"></span>&nbsp;Europe</a><a href="#Japan" class="tag"><span class="fi fi-jp"></span>&nbsp;Japan</a><a href="#Mexico" class="tag"><span class="fi fi-mx"></span>&nbsp;Mexico</a><a href="#Other Guides" class="tag"><span class="fi fi-us"></span>&nbsp;Other Guides</a><a href="#Singapore" class="tag"><span class="fi fi-sg"></span>&nbsp;Singapore</a><a href="#South Korea" class="tag"><span class="fi fi-kr"></span>&nbsp;South Korea</a><a href="#USA General" class="tag"><span class="fi fi-us"></span>&nbsp;USA General</a><a href="#United Kingdom" class="tag"><span class="fi fi-gb"></span>&nbsp;United Kingdom</a></div>
 </div>
 
-<div class="container" id="main-content">
-    <h2 class="section-title" id="Australia"><span class="fi fi-au"></span>&nbsp;Australia</h2><div class="grid"><a href="australia-to-usa-dog.html" class="card"><h3>Bring a Dog from Australia to the USA (2026 Guide)</h3><p>Australia is a low-risk country for rabies. The 2026 Process: 1. Your dog must be 6 months old and microchipped. 2. Obta...</p></a></div><h2 class="section-title" id="Canada"><span class="fi fi-ca"></span>&nbsp;Canada</h2><div class="grid"><a href="canada-to-usa-cat.html" class="card"><h3>Bring a Cat from Canada to the USA (2026)</h3><p>Importing a cat from Canada is one of the easiest routes. 2026 Update: While the CDC does not strictly require a rabies ...</p></a><a href="canada-to-usa-dog.html" class="card"><h3>Bring a Dog from Canada to the USA (2026)</h3><p>Canada is a low-risk country for rabies. Key steps: Your dog must be at least 6 months old and microchipped. You must co...</p></a></div><h2 class="section-title" id="China"><span class="fi fi-cn"></span>&nbsp;China</h2><div class="grid"><a href="china-to-usa-cat.html" class="card"><h3>Bring a Cat from China to the USA (2026 Guide)</h3><p>Importing a cat from China in 2026 is relatively straightforward. Key requirements: You need an ISO-compliant 15-digit m...</p></a><a href="china-to-usa-dog.html" class="card"><h3>Bring a Dog from China to the USA (2026 Guide)</h3><p>Dogs from China are subject to strict CDC rules as China is classified as a high-risk country for rabies. For 2026 trave...</p></a></div><h2 class="section-title" id="Europe"><span class="fi fi-eu"></span>&nbsp;Europe</h2><div class="grid"><a href="eu-to-usa-cat.html" class="card"><h3>Bring a Cat from the EU to the USA (2026)</h3><p>Traveling from the EU with a cat is streamlined if you have an EU Pet Passport. Ensure the rabies vaccination is recorde...</p></a><a href="eu-to-usa-dog.html" class="card"><h3>Bring a Dog from the EU to the USA (2026)</h3><p>Most EU countries are low-risk for rabies. 2026 Protocol: You need an ISO microchip, an EU Pet Passport with up-to-date ...</p></a></div><h2 class="section-title" id="Japan"><span class="fi fi-jp"></span>&nbsp;Japan</h2><div class="grid"><a href="japan-to-usa-cat.html" class="card"><h3>Bring a Cat from Japan to the USA (2026)</h3><p>Japan is recognized by the CDC as a rabies-free country, making the process much easier. Your cat will need an ISO micro...</p></a><a href="japan-to-usa-dog.html" class="card"><h3>Bring a Dog from Japan to the USA (2026)</h3><p>Traveling with a dog from Japan is streamlined because Japan is a low-risk country. The Process: 1. Ensure an ISO microc...</p></a></div><h2 class="section-title" id="Mexico"><span class="fi fi-mx"></span>&nbsp;Mexico</h2><div class="grid"><a href="mexico-to-usa-dog.html" class="card"><h3>Bring a Dog from Mexico to the USA (2026)</h3><p>As a neighbor and low-risk country, importing a dog from Mexico is common. The Process: Your dog needs a 15-digit ISO mi...</p></a></div><h2 class="section-title" id="Other Guides"><span class="fi fi-us"></span>&nbsp;Other Guides</h2><div class="grid"><a href="pet-travel-cost-usa.html" class="card"><h3>Cost to Bring a Pet to the USA (2026 Estimate)</h3><p>The total cost typically ranges from $1,000 to $4,500. Budget breakdown: <ul><li>Airline Fees: $200-$400 for in-cabin (s...</p></a><a href="brazil-to-usa-dog.html" class="card"><h3>Bring a Dog from Brazil to the USA (2026)</h3><p>Important: Brazil is classified as a high-risk rabies country. You must obtain a CDC Dog Import Permit at least 6 weeks ...</p></a><a href="india-to-usa-cat.html" class="card"><h3>Bring a Cat from India to the USA (2026)</h3><p>Cats from India need an ISO microchip and a rabies vaccination certificate. You must also obtain a No Objection Certific...</p></a><a href="india-to-usa-dog.html" class="card"><h3>Bring a Dog from India to the USA (2026)</h3><p>High-Risk Alert: India is on the CDC's high-risk list. You MUST apply for a CDC Dog Import Permit well in advance. Dogs ...</p></a><a href="philippines-to-usa-cat.html" class="card"><h3>Bring a Cat from the Philippines to the USA (2026)</h3><p>To bring a cat from the Philippines, you need an ISO microchip and a rabies vaccination certificate. You must obtain an ...</p></a><a href="philippines-to-usa-dog.html" class="card"><h3>Bring a Dog from the Philippines to the USA (2026)</h3><p>High-Risk Alert: The Philippines is on the CDC high-risk list. Requirements: 1. Dog must be 6 months old and microchippe...</p></a><a href="thailand-to-usa-cat.html" class="card"><h3>Bring a Cat from Thailand to the USA (2026)</h3><p>Bringing a cat from Thailand requires an ISO microchip and a rabies certificate. Visit the Animal Quarantine Station at ...</p></a><a href="thailand-to-usa-dog.html" class="card"><h3>Bring a Dog from Thailand to the USA (2026)</h3><p>High-Risk Alert: Thailand is high-risk for rabies. Your dog must be 6 months old and have an ISO microchip. You must app...</p></a><a href="vietnam-to-usa-cat.html" class="card"><h3>Bring a Cat from Vietnam to the USA (2026)</h3><p>Cats from Vietnam need an ISO microchip and a valid rabies jab. You must obtain an animal health certificate from the De...</p></a><a href="vietnam-to-usa-dog.html" class="card"><h3>Bring a Dog from Vietnam to the USA (2026)</h3><p>High-Risk Alert: Vietnam is a high-risk rabies country. Requirements: 1. Dog must be at least 6 months old. 2. 15-digit ...</p></a><a href="malaysia-to-usa-cat.html" class="card"><h3>Bring a Cat from Malaysia to the USA (2026)</h3><p>Importing a cat from Malaysia requires an ISO microchip and a rabies vaccination. You must apply for an export permit an...</p></a><a href="malaysia-to-usa-dog.html" class="card"><h3>Bring a Dog from Malaysia to the USA (2026)</h3><p>High-Risk Alert: Malaysia is classified as high-risk for rabies. Your dog must be 6 months old and microchipped. You mus...</p></a><a href="taiwan-to-usa-cat.html" class="card"><h3>Bring a Cat from Taiwan to the USA (2026)</h3><p>Taiwan is a low-risk region. Your cat needs a 15-digit ISO microchip and a rabies vaccination certificate. You must obta...</p></a><a href="taiwan-to-usa-dog.html" class="card"><h3>Bring a Dog from Taiwan to the USA (2026)</h3><p>Dogs from Taiwan follow low-risk rules. 1. Dog must be 6 months old and microchipped. 2. Complete the online CDC Dog Imp...</p></a><a href="hongkong-to-usa-cat.html" class="card"><h3>Bring a Cat from Hong Kong to the USA (2026)</h3><p>To bring a cat from Hong Kong, you need an ISO microchip and a rabies certificate. You must apply for an Export Health C...</p></a><a href="hongkong-to-usa-dog.html" class="card"><h3>Bring a Dog from Hong Kong to the USA (2026)</h3><p>Hong Kong is a low-risk country. Key steps: Your dog must be 6 months old and microchipped. You must submit the online C...</p></a><a href="cat-import-usa.html" class="card"><h3>Cat Import Requirements for the USA (2026)</h3><p>Cat import rules for the United States are simple. There is no federal requirement for a rabies vaccine, but almost all ...</p></a><a href="dog-import-usa.html" class="card"><h3>Dog Import Requirements for the USA (2026)</h3><p>The CDC heavily regulates dog imports. Core Rules: 1. Every dog must be at least 6 months old. 2. Every dog must have a ...</p></a><a href="cdc-dog-import-rules.html" class="card"><h3>CDC Dog Import Rules Explained (2026 Update)</h3><p>The CDC requires all dogs to appear healthy, be at least 6 months of age, and be microchipped with an ISO-compliant chip...</p></a><a href="cdc-dog-import-permit.html" class="card"><h3>Do You Need a CDC Dog Import Permit?</h3><p>The CDC Dog Import Permit is ONLY required for dogs coming from high-risk rabies countries that were vaccinated abroad. ...</p></a><a href="dog-import-banned-countries.html" class="card"><h3>Dog Import Restrictions and High-Risk Countries</h3><p>The CDC maintains a list of over 100 'High-Risk' countries (including much of Asia and South America). Dogs from these c...</p></a><a href="rabies-vaccine-requirements.html" class="card"><h3>Rabies Vaccine Requirements for Pet Travel (2026)</h3><p>Rabies vaccination must be administered after the ISO microchip is implanted. For primary vaccinations, the pet must wai...</p></a><a href="rabies-titer-test.html" class="card"><h3>Rabies Titer Test: When You Need It</h3><p>A Rabies Titer Test (FAVN) measures antibody levels. While the US doesn't usually require it for low-risk countries, it ...</p></a><a href="pet-microchip-requirements.html" class="card"><h3>Pet Microchip Requirements (ISO 11784/11785)</h3><p>Your pet must have a 15-digit ISO 11784/11785 compliant microchip. The chip must be implanted BEFORE the most recent rab...</p></a><a href="pet-health-certificate.html" class="card"><h3>Pet Health Certificate: What It Is and How to Get It</h3><p>An international health certificate must be signed by a licensed vet and endorsed by your national government (like Hai ...</p></a><a href="usda-accredited-vet.html" class="card"><h3>USDA-Accredited Vet: When It Matters</h3><p>For pets leaving the United States, a USDA-accredited vet is essential. Only these vets can sign official international ...</p></a><a href="fit-to-fly-letter.html" class="card"><h3>Fit-to-Fly Letter for Pets: Airline Requirements</h3><p>A 'Fit-to-Fly' letter confirms that the pet is healthy enough to withstand the stress of air travel. It is often require...</p></a><a href="pet-travel-crate.html" class="card"><h3>Airline Pet Crate Requirements (IATA Standard)</h3><p>The crate must be rigid, escape-proof, and large enough for the pet to stand, turn around, and lie down naturally. Metal...</p></a><a href="in-cabin-pet-rules.html" class="card"><h3>In-Cabin Pet Rules: Weight Limits and Booking Tips</h3><p>Most airlines limit in-cabin travel to small dogs and cats weighing under 8kg (18lbs) including the carrier. Soft-sided ...</p></a><a href="checked-baggage-pet.html" class="card"><h3>Checked Baggage Pet Travel: Pros, Cons, Rules</h3><p>Checked baggage allows your pet to travel in the climate-controlled cargo hold. This option is subject to strict 'Weathe...</p></a><a href="cargo-pet-travel.html" class="card"><h3>Pet Travel as Cargo: What to Expect</h3><p>Manifest Cargo is required for large dogs or specific airlines. Pets fly in a temperature-controlled, pressurized hold a...</p></a><a href="pet-travel-cost-usa.html" class="card"><h3>Cost to Bring a Pet to the USA (2026 Estimate)</h3><p>The total cost typically ranges from $1,000 to $4,500. Budget breakdown: Airline Fees ($200-$400 in-cabin; $1,500+ cargo...</p></a><a href="pet-travel-timeline.html" class="card"><h3>Pet Travel Timeline: 30/60/90-Day Checklist (2026)</h3><p>Success depends on a strict timeline. 90 Days: ISO microchip and rabies shot. 60 Days: Buy crate and start training; boo...</p></a><a href="pet-quarantine-usa.html" class="card"><h3>Does the USA Quarantine Pets? What Actually Happens</h3><p>For most healthy pets with correct paperwork, there is no mandatory quarantine in the USA. Inspection happens at the fir...</p></a><a href="pet-customs-arrival.html" class="card"><h3>What Happens at US Customs When You Arrive with a Pet</h3><p>Clearing customs is a 3-step process. 1. Collection: Pick up your pet at the baggage or cargo area. 2. Inspection: Head ...</p></a><a href="pet-vaccination-checklist.html" class="card"><h3>Pet Vaccination Checklist for International Travel</h3><p>Your vaccination record must be perfect. 2026 Checklist: Rabies must be given after the microchip. DHPP/FVRCP is highly ...</p></a><a href="pet-deworming.html" class="card"><h3>Do Pets Need Deworming for US Entry?</h3><p>The US federal government does not strictly require internal or external deworming for pet entry. However, your pet must...</p></a><a href="pet-tapeworm-treatment.html" class="card"><h3>Tapeworm Treatment Rules for International Pet Travel</h3><p>The US does not have a mandatory tapeworm treatment rule for pets. However, many airlines and transiting countries (like...</p></a><a href="pet-passport-usa.html" class="card"><h3>Do You Need a Pet Passport to Enter the USA?</h3><p>The 'EU Pet Passport' is an acceptable form of identification for entry from Europe. For pets from Asia or South America...</p></a><a href="moving-to-usa-with-pets.html" class="card"><h3>Moving to the USA with Pets: Full Relocation Guide</h3><p>Relocating with a pet is a major task. Key Pillars: 1. Compliance (CDC rules). 2. Logistics (choosing a pet-friendly air...</p></a><a href="traveling-with-pets-internationally.html" class="card"><h3>International Pet Travel Guide: The Basics</h3><p>International travel is stressful for pets. The Basics: Ensure your crate is IATA-compliant, choose direct flights whene...</p></a><a href="airline-pet-fees.html" class="card"><h3>Airline Pet Fees: Typical Price Ranges and Hidden Costs</h3><p>Typical 2026 Costs: In-Cabin ($125-$200); Checked Baggage ($300-$800); Manifest Cargo ($1,500-$4,000+). Always watch for...</p></a><a href="how-to-book-pet-flight.html" class="card"><h3>How to Book a Flight for Your Pet (Step-by-Step)</h3><p>Booking a pet flight requires more than just buying a ticket. 1. Research pet-friendly airlines. 2. Call to confirm pet ...</p></a><a href="best-airlines-for-pets.html" class="card"><h3>Best Airlines for Traveling with Pets (2026 Comparison)</h3><p>Top Picks: Delta & United (best for US domestic); Qatar & Emirates (gold standard for cargo); Lufthansa (excellent anima...</p></a><a href="pet-carrier-in-cabin.html" class="card"><h3>Best In-Cabin Pet Carrier Size Guide</h3><p>Most airlines require soft-sided carriers that fit under the seat. Typical Dimensions: 18 x 11 x 11 inches. The pet must...</p></a><a href="pet-escape-proof-harness.html" class="card"><h3>Escape-Proof Harness Tips for Airport Travel</h3><p>The airport is high-stress. An escape-proof harness (three-strap design) is mandatory. During TSA checks, you must remov...</p></a><a href="airport-security-with-pets.html" class="card"><h3>Airport Security with Pets: TSA Process Explained</h3><p>TSA Process: 1. Remove the pet from the carrier. 2. Walk through the metal detector with your pet in your arms. 3. Your ...</p></a><a href="pet-sedation-flight.html" class="card"><h3>Should You Sedate a Pet for Flying? Risks and Alternatives</h3><p>Warning: Major airlines strongly advise against sedating pets. Sedation can interfere with a pet's ability to regulate b...</p></a><a href="pet-motion-sickness.html" class="card"><h3>Pet Motion Sickness During Flights: Prevention Tips</h3><p>Motion sickness is common. Prevention: 1. Consult your vet about non-sedative anti-nausea medication like Cerenia. 2. Li...</p></a><a href="pet-hydration-flight.html" class="card"><h3>Keeping Your Pet Hydrated on Long Flights</h3><p>Dehydration is a major risk. Hacks: Freeze water in the crate's bowl so it melts slowly. Use a water bottle but train yo...</p></a><a href="pet-feeding-before-flight.html" class="card"><h3>Feeding Schedule Before Flying with a Pet</h3><p>A full stomach can lead to vomiting. The Golden Rule: Feed a light meal about 6-8 hours before departure. This allows fo...</p></a><a href="pet-anxiety-flight.html" class="card"><h3>How to Reduce Pet Anxiety When Flying</h3><p>Anxiety is the biggest challenge. Training is Key: 1. Crate training should begin 30 days early. 2. Place a shirt with y...</p></a><a href="pet-travel-documents-checklist.html" class="card"><h3>Pet Travel Documents Checklist (Printable)</h3><p>Essential Document Folder: 1. Original Health Certificate (Government Endorsed). 2. Rabies Certificate (Signed and Stamp...</p></a><a href="lost-pet-airport.html" class="card"><h3>What to Do If a Pet Is Lost at the Airport</h3><p>Lost pets are a nightmare; action is key. 1. Notify airline staff and airport security immediately. 2. Provide a photo a...</p></a><a href="pet-import-us-states.html" class="card"><h3>Do US States Have Different Pet Entry Rules?</h3><p>While the CDC handles federal entry, individual states have mandates. Hawaii: Extremely strict 'Rabies-Free' rules; requ...</p></a><a href="pet-arrival-lax.html" class="card"><h3>LAX Pet Arrival Guide (Los Angeles)</h3><p>Landing at LAX: For in-cabin pets, head to the animal relief stations in Tom Bradley (TBIT) immediately after customs. F...</p></a><a href="pet-arrival-sfo.html" class="card"><h3>SFO Pet Arrival Guide (San Francisco)</h3><p>At SFO: Cargo pet collection is usually at the cargo terminals near the north end of the airport. In-cabin pets clear cu...</p></a><a href="pet-arrival-jfk.html" class="card"><h3>JFK Pet Arrival Guide (New York)</h3><p>JFK is home to The ARK at JFK. Most cargo pets are processed here with 24/7 vet care. For in-cabin pets, follow signs to...</p></a><a href="pet-arrival-sea.html" class="card"><h3>SEA Pet Arrival Guide (Seattle)</h3><p>Landing at SEA: After clearing customs in the S or A Gates, in-cabin pets can use relief stations near the South Satelli...</p></a><a href="pet-arrival-ord.html" class="card"><h3>ORD Pet Arrival Guide (Chicago)</h3><p>At ORD: In-cabin pets clear customs in Terminal 5. Cargo facilities are spread out; confirm the exact warehouse address ...</p></a><a href="pet-arrival-dfw.html" class="card"><h3>DFW Pet Arrival Guide (Dallas)</h3><p>Landing at DFW: International arrivals occur at Terminal D. The CBP Agriculture office is centrally located near baggage...</p></a><a href="pet-arrival-mia.html" class="card"><h3>MIA Pet Arrival Guide (Miami)</h3><p>At MIA: Head to the North Terminal (D) or South Terminal (J) for customs. MIA is pet-friendly but can be extremely hot; ...</p></a><a href="pet-travel-insurance.html" class="card"><h3>Pet Travel Insurance: What It Covers</h3><p>2026 Travel Insurance Tips: Look for policies that cover flight cancellations, emergency vet bills in transiting countri...</p></a><a href="pet-travel-agency.html" class="card"><h3>Should You Use a Pet Relocation Agency?</h3><p>When to hire an agency: 1. You are flying a large dog as manifest cargo. 2. You are navigating high-risk CDC permit coun...</p></a><a href="pet-relocation-vs-diy.html" class="card"><h3>DIY vs Pet Relocation Service: Cost & Risk Comparison</h3><p>DIY: Costs $1,000-$2,000; requires 40 hours of research. Professional Service: Costs $3,500-$6,000+; provides end-to-end...</p></a><a href="pet-import-mistakes.html" class="card"><h3>Top Pet Import Mistakes That Cause Delays</h3><p>Avoid these top errors: 1. Microchip Order: Must be implanted *before* the rabies vaccine. 2. Crate Size: If the pet's e...</p></a><a href="pet-import-denied-entry.html" class="card"><h3>Why Pets Get Denied Entry and How to Avoid It</h3><p>Common Causes: Fraudulent paperwork; visible illness (ticks, sores); High-Risk non-compliance without a Permit. The Resu...</p></a><a href="pet-documents-translation.html" class="card"><h3>Do Pet Documents Need Translation for US Entry?</h3><p>Yes. CDC requires all records to be in English. Guidelines: If the original is in Chinese or Spanish, it must have a cer...</p></a><a href="pet-microchip-scan.html" class="card"><h3>How to Verify Your Pet Microchip Scans Correctly</h3><p>Verification Steps: 1. Ask your vet to scan the chip before every vaccination. 2. Ensure the scanner used is 'Universal'...</p></a><a href="pet-vaccine-records.html" class="card"><h3>How to Keep Vaccine Records Acceptable for Airlines</h3><p>Airlines are stricter than the government. Record Standard: Must show pet's breed and microchip number; must list vaccin...</p></a><a href="pet-health-check-before-flight.html" class="card"><h3>Pre-Flight Vet Check: What Vets Look For</h3><p>The Final Health Check happens within 10 days of departure. The Vet's Focus: Heart & Lungs (to handle altitude pressure)...</p></a><a href="pet-travel-checklist-7-days.html" class="card"><h3>7 Days Before Flying with a Pet: Checklist</h3><p>One week to go! Tasks: Confirm the 'Weather Ban' forecast; finalize the crate setup (attach bowls and document pouch); t...</p></a><a href="pet-travel-checklist-24-hours.html" class="card"><h3>24 Hours Before Flying with a Pet: Checklist</h3><p>The final 24 hours: Stop solid food 6-8 hours before the flight (water is okay); go for a long walk to tire the pet out;...</p></a><a href="pet-travel-crate-training.html" class="card"><h3>Crate Training for Flight: 7-Day Plan</h3><p>7-Day Plan: Day 1-2: Feed meals inside the crate with the door open. Day 3-4: Close the door for 10-minute intervals whi...</p></a><a href="pet-flight-delay.html" class="card"><h3>If Your Flight Is Delayed: Pet Safety Plan</h3><p>Action Plan: 1. If delayed on the tarmac, ask staff to confirm the cargo hold temperature. 2. If delayed over 4 hours at...</p></a><a href="pet-layover-guide.html" class="card"><h3>Pet Travel with Layovers: What to Plan</h3><p>Planning Tips: Aim for a 3-5 hour layover. Airports like Frankfurt (FRA) and Doha (DOH) have 'Animal Lounges' where pets...</p></a><a href="pet-import-faq.html" class="card"><h3>USA Pet Import FAQ (Quick Answers)</h3><p>Q: Does my pet need a rabies titer test? A: Generally no for US mainland, but yes for Hawaii. Q: Can I fly a snub-nosed ...</p></a></div><h2 class="section-title" id="Singapore"><span class="fi fi-sg"></span>&nbsp;Singapore</h2><div class="grid"><a href="singapore-to-usa-cat.html" class="card"><h3>Bring a Cat from Singapore to the USA (2026)</h3><p>Singapore is recognized by the CDC as a rabies-free country. The process is simple: your cat needs an ISO microchip and ...</p></a><a href="singapore-to-usa-dog.html" class="card"><h3>Bring a Dog from Singapore to the USA (2026)</h3><p>Singapore is a low-risk/rabies-free country. The 2026 Protocol: Your dog must be 6 months old and have a 15-digit microc...</p></a></div><h2 class="section-title" id="South Korea"><span class="fi fi-kr"></span>&nbsp;South Korea</h2><div class="grid"><a href="korea-to-usa-cat.html" class="card"><h3>Bring a Cat from South Korea to the USA (2026)</h3><p>Importing a cat from South Korea is efficient thanks to the Animal and Plant Quarantine Agency (QIA). 2026 Requirements:...</p></a><a href="korea-to-usa-dog.html" class="card"><h3>Bring a Dog from South Korea to the USA (2026)</h3><p>South Korea is a low-risk country for rabies. Key steps: 1. Ensure your dog is at least 6 months old and has an ISO micr...</p></a></div><h2 class="section-title" id="USA General"><span class="fi fi-us"></span>&nbsp;USA General</h2><div class="grid"><a href="usa-pet-import.html" class="card"><h3>USA Pet Import Requirements (Cats & Dogs) 2026</h3><p>Importing pets to the USA involves meeting rules from the CDC and your airline. Cats have minimal requirements beyond be...</p></a></div><h2 class="section-title" id="United Kingdom"><span class="fi fi-gb"></span>&nbsp;United Kingdom</h2><div class="grid"><a href="uk-to-usa-cat.html" class="card"><h3>Bring a Cat from the UK to the USA (2026)</h3><p>The UK is recognized as rabies-free. To bring your cat to the USA, you need an ISO microchip and a UK Export Health Cert...</p></a><a href="uk-to-usa-dog.html" class="card"><h3>Bring a Dog from the UK to the USA (2026)</h3><p>Dogs from the UK (Great Britain and Northern Ireland) are low-risk. Requirements: An ISO microchip, a UK government-endo...</p></a></div>
-    <div id="no-results">No guides found matching your search.</div>
+<div class="container">
+    <h2 class="section-title"><span class="fi fi-au"></span>Australia</h2><div class="grid">
+            <a href="australia-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from Australia to the USA (2026 Guide)</h3>
+                <p>Australia is a low-risk country for rabies. <strong>The 2026 Process:</strong> 1. Your dog must be 6...</p>
+            </a>
+            </div><h2 class="section-title"><span class="fi fi-ca"></span>Canada</h2><div class="grid">
+            <a href="canada-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from Canada to the USA (2026)</h3>
+                <p>Importing a cat from Canada is one of the easiest routes. <strong>2026 Update:</strong> While the CD...</p>
+            </a>
+            
+            <a href="canada-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from Canada to the USA (2026)</h3>
+                <p>Canada is a low-risk country for rabies. <strong>Key steps:</strong> Your dog must be at least 6 mon...</p>
+            </a>
+            </div><h2 class="section-title"><span class="fi fi-cn"></span>China</h2><div class="grid">
+            <a href="china-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from China to the USA (2026 Guide)</h3>
+                <p>Importing a cat from China in 2026 is relatively straightforward. <strong>Key requirements:</strong>...</p>
+            </a>
+            
+            <a href="china-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from China to the USA (2026 Guide)</h3>
+                <p>Dogs from China are subject to strict CDC rules as China is classified as a high-risk country for ra...</p>
+            </a>
+            </div><h2 class="section-title"><span class="fi fi-eu"></span>Europe</h2><div class="grid">
+            <a href="eu-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from the EU to the USA (2026)</h3>
+                <p>Traveling from the EU with a cat is streamlined if you have an <strong>EU Pet Passport</strong>. Ens...</p>
+            </a>
+            
+            <a href="eu-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from the EU to the USA (2026)</h3>
+                <p>Most EU countries are low-risk for rabies. <strong>2026 Protocol:</strong> You need an ISO microchip...</p>
+            </a>
+            </div><h2 class="section-title"><span class="fi fi-us"></span>General/USA</h2><div class="grid">
+            <a href="usa-pet-import.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>USA Pet Import Requirements (Cats & Dogs) 2026</h3>
+                <p>Importing pets to the USA involves meeting rules from the CDC and your airline. Cats have minimal re...</p>
+            </a>
+            </div><h2 class="section-title"><span class="fi fi-jp"></span>Japan</h2><div class="grid">
+            <a href="japan-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from Japan to the USA (2026)</h3>
+                <p>Japan is recognized by the CDC as a <strong>rabies-free</strong> country, making the process much ea...</p>
+            </a>
+            
+            <a href="japan-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from Japan to the USA (2026)</h3>
+                <p>Traveling with a dog from Japan is streamlined because Japan is a low-risk country. <strong>The Proc...</p>
+            </a>
+            </div><h2 class="section-title"><span class="fi fi-mx"></span>Mexico</h2><div class="grid">
+            <a href="mexico-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from Mexico to the USA (2026)</h3>
+                <p>As a neighbor and low-risk country, importing a dog from Mexico is common. <strong>The Process:</str...</p>
+            </a>
+            </div><h2 class="section-title"><span class="fi fi-us"></span>Other</h2><div class="grid">
+            <a href="pet-travel-cost-usa.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Cost to Bring a Pet to the USA (2026 Estimate)</h3>
+                <p>The total cost typically ranges from $1,000 to $4,500. <strong>Budget breakdown:</strong> <ul><li><s...</p>
+            </a>
+            
+            <a href="brazil-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from Brazil to the USA (2026)</h3>
+                <p><strong>Important:</strong> Brazil is classified as a high-risk rabies country. You must obtain a <s...</p>
+            </a>
+            
+            <a href="india-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from India to the USA (2026)</h3>
+                <p>Cats from India need an ISO microchip and a rabies vaccination certificate. You must also obtain a <...</p>
+            </a>
+            
+            <a href="india-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from India to the USA (2026)</h3>
+                <p><strong>High-Risk Alert:</strong> India is on the CDC's high-risk list. You MUST apply for a <strong...</p>
+            </a>
+            
+            <a href="philippines-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from the Philippines to the USA (2026)</h3>
+                <p>To bring a cat from the Philippines, you need an ISO microchip and a rabies vaccination certificate....</p>
+            </a>
+            
+            <a href="philippines-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from the Philippines to the USA (2026)</h3>
+                <p><strong>High-Risk Alert:</strong> The Philippines is on the CDC high-risk list. Requirements: 1. Dog...</p>
+            </a>
+            
+            <a href="thailand-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from Thailand to the USA (2026)</h3>
+                <p>Bringing a cat from Thailand requires an ISO microchip and a rabies certificate. Visit the Animal Qu...</p>
+            </a>
+            
+            <a href="thailand-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from Thailand to the USA (2026)</h3>
+                <p><strong>High-Risk Alert:</strong> Thailand is high-risk for rabies. Your dog must be 6 months old an...</p>
+            </a>
+            
+            <a href="vietnam-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from Vietnam to the USA (2026)</h3>
+                <p>Cats from Vietnam need an ISO microchip and a valid rabies jab. You must obtain an animal health cer...</p>
+            </a>
+            
+            <a href="vietnam-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from Vietnam to the USA (2026)</h3>
+                <p><strong>High-Risk Alert:</strong> Vietnam is a high-risk rabies country. Requirements: 1. Dog must b...</p>
+            </a>
+            
+            <a href="malaysia-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from Malaysia to the USA (2026)</h3>
+                <p>Importing a cat from Malaysia requires an ISO microchip and a rabies vaccination. You must apply for...</p>
+            </a>
+            
+            <a href="malaysia-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from Malaysia to the USA (2026)</h3>
+                <p><strong>High-Risk Alert:</strong> Malaysia is classified as high-risk for rabies. Your dog must be 6...</p>
+            </a>
+            
+            <a href="taiwan-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from Taiwan to the USA (2026)</h3>
+                <p>Taiwan is a low-risk region. Your cat needs a 15-digit ISO microchip and a rabies vaccination certif...</p>
+            </a>
+            
+            <a href="taiwan-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from Taiwan to the USA (2026)</h3>
+                <p>Dogs from Taiwan follow low-risk rules. 1. Dog must be 6 months old and microchipped. 2. Complete th...</p>
+            </a>
+            
+            <a href="hongkong-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from Hong Kong to the USA (2026)</h3>
+                <p>To bring a cat from Hong Kong, you need an ISO microchip and a rabies certificate. You must apply fo...</p>
+            </a>
+            
+            <a href="hongkong-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from Hong Kong to the USA (2026)</h3>
+                <p>Hong Kong is a low-risk country. Key steps: Your dog must be 6 months old and microchipped. You must...</p>
+            </a>
+            
+            <a href="cat-import-usa.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Cat Import Requirements for the USA (2026)</h3>
+                <p>Cat import rules for the United States are simple. There is no federal requirement for a rabies vacc...</p>
+            </a>
+            
+            <a href="dog-import-usa.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Dog Import Requirements for the USA (2026)</h3>
+                <p>The CDC heavily regulates dog imports. Core Rules: 1. Every dog must be at least 6 months old. 2. Ev...</p>
+            </a>
+            
+            <a href="cdc-dog-import-rules.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>CDC Dog Import Rules Explained (2026 Update)</h3>
+                <p>The CDC requires all dogs to appear healthy, be at least 6 months of age, and be microchipped with a...</p>
+            </a>
+            
+            <a href="cdc-dog-import-permit.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Do You Need a CDC Dog Import Permit?</h3>
+                <p>The CDC Dog Import Permit is ONLY required for dogs coming from high-risk rabies countries that were...</p>
+            </a>
+            
+            <a href="dog-import-banned-countries.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Dog Import Restrictions and High-Risk Countries</h3>
+                <p>The CDC maintains a list of over 100 'High-Risk' countries (including much of Asia and South America...</p>
+            </a>
+            
+            <a href="rabies-vaccine-requirements.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Rabies Vaccine Requirements for Pet Travel (2026)</h3>
+                <p>Rabies vaccination must be administered after the ISO microchip is implanted. For primary vaccinatio...</p>
+            </a>
+            
+            <a href="rabies-titer-test.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Rabies Titer Test: When You Need It</h3>
+                <p>A Rabies Titer Test (FAVN) measures antibody levels. While the US doesn't usually require it for low...</p>
+            </a>
+            
+            <a href="pet-microchip-requirements.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Pet Microchip Requirements (ISO 11784/11785)</h3>
+                <p>Your pet must have a 15-digit ISO 11784/11785 compliant microchip. The chip must be implanted BEFORE...</p>
+            </a>
+            
+            <a href="pet-health-certificate.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Pet Health Certificate: What It Is and How to Get It</h3>
+                <p>An international health certificate must be signed by a licensed vet and endorsed by your national g...</p>
+            </a>
+            
+            <a href="usda-accredited-vet.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>USDA-Accredited Vet: When It Matters</h3>
+                <p>For pets leaving the United States, a USDA-accredited vet is essential. Only these vets can sign off...</p>
+            </a>
+            
+            <a href="fit-to-fly-letter.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Fit-to-Fly Letter for Pets: Airline Requirements</h3>
+                <p>A 'Fit-to-Fly' letter confirms that the pet is healthy enough to withstand the stress of air travel....</p>
+            </a>
+            
+            <a href="pet-travel-crate.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Airline Pet Crate Requirements (IATA Standard)</h3>
+                <p>The crate must be rigid, escape-proof, and large enough for the pet to stand, turn around, and lie d...</p>
+            </a>
+            
+            <a href="in-cabin-pet-rules.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>In-Cabin Pet Rules: Weight Limits and Booking Tips</h3>
+                <p>Most airlines limit in-cabin travel to small dogs and cats weighing under 8kg (18lbs) including the ...</p>
+            </a>
+            
+            <a href="checked-baggage-pet.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Checked Baggage Pet Travel: Pros, Cons, Rules</h3>
+                <p>Checked baggage allows your pet to travel in the climate-controlled cargo hold. This option is subje...</p>
+            </a>
+            
+            <a href="cargo-pet-travel.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Pet Travel as Cargo: What to Expect</h3>
+                <p>Manifest Cargo is required for large dogs or specific airlines. Pets fly in a temperature-controlled...</p>
+            </a>
+            
+            <a href="pet-travel-cost-usa.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Cost to Bring a Pet to the USA (2026 Estimate)</h3>
+                <p>The total cost typically ranges from $1,000 to $4,500. Budget breakdown: Airline Fees ($200-$400 in-...</p>
+            </a>
+            
+            <a href="pet-travel-timeline.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Pet Travel Timeline: 30/60/90-Day Checklist (2026)</h3>
+                <p>Success depends on a strict timeline. 90 Days: ISO microchip and rabies shot. 60 Days: Buy crate and...</p>
+            </a>
+            
+            <a href="pet-quarantine-usa.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Does the USA Quarantine Pets? What Actually Happens</h3>
+                <p>For most healthy pets with correct paperwork, there is no mandatory quarantine in the USA. Inspectio...</p>
+            </a>
+            
+            <a href="pet-customs-arrival.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>What Happens at US Customs When You Arrive with a Pet</h3>
+                <p>Clearing customs is a 3-step process. 1. Collection: Pick up your pet at the baggage or cargo area. ...</p>
+            </a>
+            
+            <a href="pet-vaccination-checklist.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Pet Vaccination Checklist for International Travel</h3>
+                <p>Your vaccination record must be perfect. 2026 Checklist: Rabies must be given after the microchip. D...</p>
+            </a>
+            
+            <a href="pet-deworming.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Do Pets Need Deworming for US Entry?</h3>
+                <p>The US federal government does not strictly require internal or external deworming for pet entry. Ho...</p>
+            </a>
+            
+            <a href="pet-tapeworm-treatment.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Tapeworm Treatment Rules for International Pet Travel</h3>
+                <p>The US does not have a mandatory tapeworm treatment rule for pets. However, many airlines and transi...</p>
+            </a>
+            
+            <a href="pet-passport-usa.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Do You Need a Pet Passport to Enter the USA?</h3>
+                <p>The 'EU Pet Passport' is an acceptable form of identification for entry from Europe. For pets from A...</p>
+            </a>
+            
+            <a href="moving-to-usa-with-pets.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Moving to the USA with Pets: Full Relocation Guide</h3>
+                <p>Relocating with a pet is a major task. Key Pillars: 1. Compliance (CDC rules). 2. Logistics (choosin...</p>
+            </a>
+            
+            <a href="traveling-with-pets-internationally.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>International Pet Travel Guide: The Basics</h3>
+                <p>International travel is stressful for pets. The Basics: Ensure your crate is IATA-compliant, choose ...</p>
+            </a>
+            
+            <a href="airline-pet-fees.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Airline Pet Fees: Typical Price Ranges and Hidden Costs</h3>
+                <p>Typical 2026 Costs: In-Cabin ($125-$200); Checked Baggage ($300-$800); Manifest Cargo ($1,500-$4,000...</p>
+            </a>
+            
+            <a href="how-to-book-pet-flight.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>How to Book a Flight for Your Pet (Step-by-Step)</h3>
+                <p>Booking a pet flight requires more than just buying a ticket. 1. Research pet-friendly airlines. 2. ...</p>
+            </a>
+            
+            <a href="best-airlines-for-pets.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Best Airlines for Traveling with Pets (2026 Comparison)</h3>
+                <p>Top Picks: Delta & United (best for US domestic); Qatar & Emirates (gold standard for cargo); Luftha...</p>
+            </a>
+            
+            <a href="pet-carrier-in-cabin.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Best In-Cabin Pet Carrier Size Guide</h3>
+                <p>Most airlines require soft-sided carriers that fit under the seat. Typical Dimensions: 18 x 11 x 11 ...</p>
+            </a>
+            
+            <a href="pet-escape-proof-harness.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Escape-Proof Harness Tips for Airport Travel</h3>
+                <p>The airport is high-stress. An escape-proof harness (three-strap design) is mandatory. During TSA ch...</p>
+            </a>
+            
+            <a href="airport-security-with-pets.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Airport Security with Pets: TSA Process Explained</h3>
+                <p>TSA Process: 1. Remove the pet from the carrier. 2. Walk through the metal detector with your pet in...</p>
+            </a>
+            
+            <a href="pet-sedation-flight.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Should You Sedate a Pet for Flying? Risks and Alternatives</h3>
+                <p>Warning: Major airlines strongly advise against sedating pets. Sedation can interfere with a pet's a...</p>
+            </a>
+            
+            <a href="pet-motion-sickness.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Pet Motion Sickness During Flights: Prevention Tips</h3>
+                <p>Motion sickness is common. Prevention: 1. Consult your vet about non-sedative anti-nausea medication...</p>
+            </a>
+            
+            <a href="pet-hydration-flight.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Keeping Your Pet Hydrated on Long Flights</h3>
+                <p>Dehydration is a major risk. Hacks: Freeze water in the crate's bowl so it melts slowly. Use a water...</p>
+            </a>
+            
+            <a href="pet-feeding-before-flight.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Feeding Schedule Before Flying with a Pet</h3>
+                <p>A full stomach can lead to vomiting. The Golden Rule: Feed a light meal about 6-8 hours before depar...</p>
+            </a>
+            
+            <a href="pet-anxiety-flight.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>How to Reduce Pet Anxiety When Flying</h3>
+                <p>Anxiety is the biggest challenge. Training is Key: 1. Crate training should begin 30 days early. 2. ...</p>
+            </a>
+            
+            <a href="pet-travel-documents-checklist.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Pet Travel Documents Checklist (Printable)</h3>
+                <p>Essential Document Folder: 1. Original Health Certificate (Government Endorsed). 2. Rabies Certifica...</p>
+            </a>
+            
+            <a href="lost-pet-airport.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>What to Do If a Pet Is Lost at the Airport</h3>
+                <p>Lost pets are a nightmare; action is key. 1. Notify airline staff and airport security immediately. ...</p>
+            </a>
+            
+            <a href="pet-import-us-states.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Do US States Have Different Pet Entry Rules?</h3>
+                <p>While the CDC handles federal entry, individual states have mandates. Hawaii: Extremely strict 'Rabi...</p>
+            </a>
+            
+            <a href="pet-arrival-lax.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>LAX Pet Arrival Guide (Los Angeles)</h3>
+                <p>Landing at LAX: For in-cabin pets, head to the animal relief stations in Tom Bradley (TBIT) immediat...</p>
+            </a>
+            
+            <a href="pet-arrival-sfo.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>SFO Pet Arrival Guide (San Francisco)</h3>
+                <p>At SFO: Cargo pet collection is usually at the cargo terminals near the north end of the airport. In...</p>
+            </a>
+            
+            <a href="pet-arrival-jfk.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>JFK Pet Arrival Guide (New York)</h3>
+                <p>JFK is home to The ARK at JFK. Most cargo pets are processed here with 24/7 vet care. For in-cabin p...</p>
+            </a>
+            
+            <a href="pet-arrival-sea.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>SEA Pet Arrival Guide (Seattle)</h3>
+                <p>Landing at SEA: After clearing customs in the S or A Gates, in-cabin pets can use relief stations ne...</p>
+            </a>
+            
+            <a href="pet-arrival-ord.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>ORD Pet Arrival Guide (Chicago)</h3>
+                <p>At ORD: In-cabin pets clear customs in Terminal 5. Cargo facilities are spread out; confirm the exac...</p>
+            </a>
+            
+            <a href="pet-arrival-dfw.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>DFW Pet Arrival Guide (Dallas)</h3>
+                <p>Landing at DFW: International arrivals occur at Terminal D. The CBP Agriculture office is centrally ...</p>
+            </a>
+            
+            <a href="pet-arrival-mia.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>MIA Pet Arrival Guide (Miami)</h3>
+                <p>At MIA: Head to the North Terminal (D) or South Terminal (J) for customs. MIA is pet-friendly but ca...</p>
+            </a>
+            
+            <a href="pet-travel-insurance.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Pet Travel Insurance: What It Covers</h3>
+                <p>2026 Travel Insurance Tips: Look for policies that cover flight cancellations, emergency vet bills i...</p>
+            </a>
+            
+            <a href="pet-travel-agency.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Should You Use a Pet Relocation Agency?</h3>
+                <p>When to hire an agency: 1. You are flying a large dog as manifest cargo. 2. You are navigating high-...</p>
+            </a>
+            
+            <a href="pet-relocation-vs-diy.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>DIY vs Pet Relocation Service: Cost & Risk Comparison</h3>
+                <p>DIY: Costs $1,000-$2,000; requires 40 hours of research. Professional Service: Costs $3,500-$6,000+;...</p>
+            </a>
+            
+            <a href="pet-import-mistakes.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Top Pet Import Mistakes That Cause Delays</h3>
+                <p>Avoid these top errors: 1. Microchip Order: Must be implanted *before* the rabies vaccine. 2. Crate ...</p>
+            </a>
+            
+            <a href="pet-import-denied-entry.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Why Pets Get Denied Entry and How to Avoid It</h3>
+                <p>Common Causes: Fraudulent paperwork; visible illness (ticks, sores); High-Risk non-compliance withou...</p>
+            </a>
+            
+            <a href="pet-documents-translation.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Do Pet Documents Need Translation for US Entry?</h3>
+                <p>Yes. CDC requires all records to be in English. Guidelines: If the original is in Chinese or Spanish...</p>
+            </a>
+            
+            <a href="pet-microchip-scan.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>How to Verify Your Pet Microchip Scans Correctly</h3>
+                <p>Verification Steps: 1. Ask your vet to scan the chip before every vaccination. 2. Ensure the scanner...</p>
+            </a>
+            
+            <a href="pet-vaccine-records.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>How to Keep Vaccine Records Acceptable for Airlines</h3>
+                <p>Airlines are stricter than the government. Record Standard: Must show pet's breed and microchip numb...</p>
+            </a>
+            
+            <a href="pet-health-check-before-flight.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Pre-Flight Vet Check: What Vets Look For</h3>
+                <p>The Final Health Check happens within 10 days of departure. The Vet's Focus: Heart & Lungs (to handl...</p>
+            </a>
+            
+            <a href="pet-travel-checklist-7-days.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>7 Days Before Flying with a Pet: Checklist</h3>
+                <p>One week to go! Tasks: Confirm the 'Weather Ban' forecast; finalize the crate setup (attach bowls an...</p>
+            </a>
+            
+            <a href="pet-travel-checklist-24-hours.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>24 Hours Before Flying with a Pet: Checklist</h3>
+                <p>The final 24 hours: Stop solid food 6-8 hours before the flight (water is okay); go for a long walk ...</p>
+            </a>
+            
+            <a href="pet-travel-crate-training.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Crate Training for Flight: 7-Day Plan</h3>
+                <p>7-Day Plan: Day 1-2: Feed meals inside the crate with the door open. Day 3-4: Close the door for 10-...</p>
+            </a>
+            
+            <a href="pet-flight-delay.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>If Your Flight Is Delayed: Pet Safety Plan</h3>
+                <p>Action Plan: 1. If delayed on the tarmac, ask staff to confirm the cargo hold temperature. 2. If del...</p>
+            </a>
+            
+            <a href="pet-layover-guide.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>Pet Travel with Layovers: What to Plan</h3>
+                <p>Planning Tips: Aim for a 3-5 hour layover. Airports like Frankfurt (FRA) and Doha (DOH) have 'Animal...</p>
+            </a>
+            
+            <a href="pet-import-faq.html" class="card" data-type="both">
+                <div class="badge-row"><span class="badge badge-dog">Dog</span><span class="badge badge-cat">Cat</span></div>
+                <h3>USA Pet Import FAQ (Quick Answers)</h3>
+                <p>Q: Does my pet need a rabies titer test? A: Generally no for US mainland, but yes for Hawaii. Q: Can...</p>
+            </a>
+            </div><h2 class="section-title"><span class="fi fi-sg"></span>Singapore</h2><div class="grid">
+            <a href="singapore-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from Singapore to the USA (2026)</h3>
+                <p>Singapore is recognized by the CDC as a <strong>rabies-free</strong> country. The process is simple:...</p>
+            </a>
+            
+            <a href="singapore-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from Singapore to the USA (2026)</h3>
+                <p>Singapore is a low-risk/rabies-free country. <strong>The 2026 Protocol:</strong> Your dog must be 6 ...</p>
+            </a>
+            </div><h2 class="section-title"><span class="fi fi-kr"></span>South Korea</h2><div class="grid">
+            <a href="korea-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from South Korea to the USA (2026)</h3>
+                <p>Importing a cat from South Korea is efficient thanks to the <strong>Animal and Plant Quarantine Agen...</p>
+            </a>
+            
+            <a href="korea-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from South Korea to the USA (2026)</h3>
+                <p>South Korea is a low-risk country for rabies. <strong>Key steps:</strong> 1. Ensure your dog is at l...</p>
+            </a>
+            </div><h2 class="section-title"><span class="fi fi-gb"></span>United Kingdom</h2><div class="grid">
+            <a href="uk-to-usa-cat.html" class="card" data-type="cat">
+                <div class="badge-row"><span class="badge badge-cat">cat</span></div>
+                <h3>Bring a Cat from the UK to the USA (2026)</h3>
+                <p>The UK is recognized as rabies-free. To bring your cat to the USA, you need an ISO microchip and a <...</p>
+            </a>
+            
+            <a href="uk-to-usa-dog.html" class="card" data-type="dog">
+                <div class="badge-row"><span class="badge badge-dog">dog</span></div>
+                <h3>Bring a Dog from the UK to the USA (2026)</h3>
+                <p>Dogs from the UK (Great Britain and Northern Ireland) are low-risk. <strong>Requirements:</strong> A...</p>
+            </a>
+            </div>
 </div>
-
-<div class="footer"><p>© 2026 Pet Entry Guide. All rights reserved.</p></div>
 
 <script>
     const searchInput = document.getElementById('search-input');
-    const countrySelect = document.getElementById('country-select');
     const cards = document.querySelectorAll('.card');
-    const titles = document.querySelectorAll('.section-title');
-    const noResults = document.getElementById('no-results');
 
-    // 搜索过滤逻辑
+    function filterType(type, btn) {
+        // 更新按钮状态
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // 执行过滤
+        cards.forEach(card => {
+            const isMatch = type === 'all' || card.getAttribute('data-type') === type || card.getAttribute('data-type') === 'both';
+            card.style.display = isMatch ? 'flex' : 'none';
+        });
+        // 隐藏空标题
+        document.querySelectorAll('.section-title').forEach(title => {
+            const grid = title.nextElementSibling;
+            const hasVisible = Array.from(grid.querySelectorAll('.card')).some(c => c.style.display !== 'none');
+            title.style.display = hasVisible ? 'flex' : 'none';
+            grid.style.display = hasVisible ? 'grid' : 'none';
+        });
+    }
+
     searchInput.addEventListener('input', (e) => {
         const term = e.target.value.toLowerCase();
-        let foundAny = false;
-
-        titles.forEach((title) => {
-            const grid = title.nextElementSibling;
-            let foundInGrid = false;
-            grid.querySelectorAll('.card').forEach(card => {
-                const match = card.innerText.toLowerCase().includes(term);
-                card.style.display = match ? 'flex' : 'none';
-                if (match) { foundInGrid = foundAny = true; }
-            });
-            title.style.display = foundInGrid ? 'flex' : 'none';
-            grid.style.display = foundInGrid ? 'grid' : 'none';
+        cards.forEach(card => {
+            const text = card.innerText.toLowerCase();
+            card.style.display = text.includes(term) ? 'flex' : 'none';
         });
-        noResults.style.display = foundAny ? 'none' : 'block';
-    });
-
-    // 提示词点击逻辑
-    document.querySelectorAll('.hint-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-            searchInput.value = chip.textContent;
-            searchInput.dispatchEvent(new Event('input'));
-        });
-    });
-
-    // 下拉框跳转逻辑
-    countrySelect.addEventListener('change', (e) => {
-        const targetId = e.target.value;
-        if (targetId) {
-            document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
-            // 清空搜索以便看到跳转结果
-            searchInput.value = '';
-            searchInput.dispatchEvent(new Event('input'));
-        }
+        // 逻辑同上
     });
 </script>
 </body>
