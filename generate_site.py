@@ -5,7 +5,7 @@ from datetime import date
 SITE = "https://petentryguide.com"
 TODAY = date.today().isoformat()
 
-# 你想要的内部链接（每篇文章底部都会自动生成）
+# 导航链接
 NAV_LINKS = [
     ("/usa-pet-import", "USA Pet Import Guide"),
     ("/pet-travel-documents-checklist", "Pet Documents Checklist"),
@@ -19,58 +19,39 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 <title>{title} | Pet Entry Guide</title>
 <meta name="description" content="{desc}">
 <link rel="canonical" href="{canonical}">
+<style>
+    body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }}
+    h1 {{ color: #1a73e8; border-bottom: 2px solid #eee; padding-bottom: 10px; }}
+    .content {{ background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee; margin: 20px 0; }}
+    .footer {{ margin-top: 40px; font-size: 0.9em; color: #666; border-top: 1px solid #eee; padding-top: 20px; }}
+    li {{ margin-bottom: 8px; }}
+</style>
 </head>
-
 <body>
 
 <h1>{title}</h1>
-
 <p><em>Last updated: {today}</em></p>
 
-<p>This guide explains everything you need to know about {title_lower}.</p>
+<div class="content">
+{article_body}
+</div>
 
-<h2>Requirements</h2>
-
+<h2>Essential Preparation</h2>
 <ul>
-<li>ISO compatible microchip</li>
-<li>Rabies vaccination</li>
-<li>Veterinary health certificate</li>
-<li>Airline approved pet crate</li>
+    <li>ISO 11784/11785 compliant microchip</li>
+    <li>Rabies vaccination (at least 30 days before travel)</li>
+    <li>International health certificate (endorsed by local authorities)</li>
+    <li>IATA approved travel crate</li>
 </ul>
 
-<h2>Step-by-Step Process</h2>
-
-<ol>
-<li>Microchip your pet</li>
-<li>Get rabies vaccination</li>
-<li>Prepare health certificate</li>
-<li>Book airline pet travel</li>
-<li>Prepare travel crate</li>
-</ol>
-
-<h2>Estimated Cost</h2>
-
-<p>The cost of bringing a pet to the United States typically ranges from $800 to $4000 depending on airline, distance, and whether you use a relocation service.</p>
-
-<h2>Timeline</h2>
-
-<p>Most pet import preparation takes 1–3 months depending on vaccination timing and documentation.</p>
-
-<h2>FAQ</h2>
-
-<h3>Do pets need quarantine in the United States?</h3>
-<p>Most pets do not need quarantine if documentation and vaccinations are correct.</p>
-
-<h3>Can pets travel in cabin?</h3>
-<p>Many airlines allow small pets in cabin if they meet carrier size requirements.</p>
-
 <h2>Related Guides</h2>
-
 <ul>
 {related_links}
 </ul>
 
-<p>© {year} Pet Entry Guide</p>
+<div class="footer">
+    <p>© {year} Pet Entry Guide - Expert assistance for your pet's relocation to the USA.</p>
+</div>
 
 </body>
 </html>
@@ -82,15 +63,14 @@ SITEMAP_HEADER = """<?xml version="1.0" encoding="UTF-8"?>
 SITEMAP_FOOTER = "</urlset>\n"
 
 def slug_to_path(slug: str) -> str:
-    # 你的站现在是“干净URL”，访问 /slug（不带 .html）
     return f"/{slug}"
 
 def make_desc(title: str) -> str:
-    return f"Complete guide to {title}. Requirements, documents, timeline and costs."
+    return f"Complete 2026 requirements for {title}. Learn about microchips, vaccines, and documentation."
 
 def ensure_topics():
     if not os.path.exists("topics.csv"):
-        raise FileNotFoundError("topics.csv not found in repo root.")
+        raise FileNotFoundError("topics.csv not found.")
 
 def read_topics():
     topics = []
@@ -99,26 +79,27 @@ def read_topics():
         for row in reader:
             slug = (row.get("slug") or "").strip()
             title = (row.get("title") or "").strip()
+            # 获取内容列，如果没有这一列或内容为空，设为 None
+            content = row.get("content", "").strip()
             if not slug or not title:
                 continue
-            topics.append((slug, title))
-    if not topics:
-        raise ValueError("No topics found in topics.csv")
+            topics.append((slug, title, content))
     return topics
 
-def write_page(slug: str, title: str):
+def write_page(slug: str, title: str, content: str):
     path = slug_to_path(slug)
     canonical = f"{SITE}{path}"
-    # 生成底部的关联链接 HTML 列表
     related = "\n".join([f'    <li><a href="{href}">{text}</a></li>' for href, text in NAV_LINKS])
 
-    # 填充模板
+    # 如果 content 为空，生成默认段落
+    article_body = content if content else f"<p>Bringing your pet to the United States involves several critical steps. For <strong>{title}</strong>, you must ensure all vaccinations are up to date and all documents are endorsed by the proper government agencies. This guide covers the essential timeline and requirements for a smooth arrival.</p>"
+
     html = PAGE_TEMPLATE.format(
         title=title,
-        title_lower=title.lower(),
         desc=make_desc(title),
         canonical=canonical,
         today=TODAY,
+        article_body=article_body,
         related_links=related,
         year=str(date.today().year)
     )
@@ -128,48 +109,27 @@ def write_page(slug: str, title: str):
         f.write(html)
 
 def write_index(topics):
-    links = "\n".join([f'    <li><a href="{slug_to_path(slug)}">{title}</a></li>' for slug, title in topics])
+    links = "\n".join([f'    <li><a href="{slug_to_path(slug)}">{title}</a></li>' for slug, title, content in topics])
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Pet Entry Guide</title>
-  <meta name="description" content="Practical guides for pet import rules, documents, costs, and airline travel." />
-  <link rel="canonical" href="{SITE}/" />
+  <title>Pet Entry Guide | USA Pet Import 2026</title>
+  <style>body{{font-family:sans-serif; line-height:1.6; max-width:800px; margin:0 auto; padding:20px;}} a{{color:#1a73e8;}}</style>
 </head>
 <body>
   <h1>Pet Entry Guide</h1>
-  <p><em>Last updated: {TODAY}</em></p>
-  <p>Browse our detailed guides:</p>
-  <ul>
-{links}
-  </ul>
+  <p>Find the specific requirements for your pet's journey to the USA:</p>
+  <ul>{links}</ul>
 </body>
-</html>
-"""
+</html>"""
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
 
 def write_sitemap(topics):
-    items = []
-    # 首页
-    items.append(f"""<url>
-  <loc>{SITE}/</loc>
-  <lastmod>{TODAY}</lastmod>
-  <changefreq>weekly</changefreq>
-  <priority>1.0</priority>
-</url>""")
-    # 每个生成的页面
-    for slug, _title in topics:
-        url = f"{SITE}{slug_to_path(slug)}"
-        items.append(f"""<url>
-  <loc>{url}</loc>
-  <lastmod>{TODAY}</lastmod>
-  <changefreq>monthly</changefreq>
-  <priority>0.8</priority>
-</url>""")
-    
+    items = [f"<url><loc>{SITE}/</loc><lastmod>{TODAY}</lastmod><priority>1.0</priority></url>"]
+    for slug, _, _ in topics:
+        items.append(f"<url><loc>{SITE}/{slug}</loc><lastmod>{TODAY}</lastmod><priority>0.8</priority></url>")
     xml = SITEMAP_HEADER + "\n".join(items) + SITEMAP_FOOTER
     with open("sitemap.xml", "w", encoding="utf-8") as f:
         f.write(xml)
@@ -177,16 +137,11 @@ def write_sitemap(topics):
 def main():
     ensure_topics()
     topics = read_topics()
-
-    # 生成所有页面
-    for slug, title in topics:
-        write_page(slug, title)
-
-    # 生成首页目录 + sitemap
+    for slug, title, content in topics:
+        write_page(slug, title, content)
     write_index(topics)
     write_sitemap(topics)
-
-    print(f"Success! Generated {len(topics)} pages, index.html, and sitemap.xml")
+    print(f"Success! Processed {len(topics)} pages.")
 
 if __name__ == "__main__":
     main()
