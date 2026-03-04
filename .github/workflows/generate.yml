@@ -1,0 +1,33 @@
+name: Generate Pages
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "topics.csv"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run generator
+        run: python generate_site.py
+
+      - name: Commit generated pages
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "auto generate pages" || echo "no changes"
+          git push
