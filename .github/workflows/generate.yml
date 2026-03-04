@@ -30,21 +30,20 @@ jobs:
                 git config --global user.name "github-actions[bot]"
                 git config --global user.email "github-actions[bot]@users.noreply.github.com"
       
-                # 1. 暂存所有自动生成的 HTML 页面
+                # 1. 暂存所有变更
                 git add -A
                 
-                # 2. 检查是否有实质性内容更新，防止 commit 命令报错
+                # 2. 检查是否有更新
                 if git diff --staged --quiet; then
                   echo "No changes to commit, skipping push."
                   exit 0
                 fi
       
-                # 3. 提交变更，[skip ci] 标签非常关键，能防止 Action 无限触发
+                # 3. 提交变更（一定要带 [skip ci]）
                 git commit -m "auto generate pages [skip ci]"
       
-                # 4. 核心修复：在 Push 之前拉取远程最新提交，并把本地生成的页面提交“接”在末尾
-                # --autostash 会自动处理拉取时可能存在的本地临时状态
+                # 4. 把远程最新的代码拉下来，垫在我们刚刚生成的提交下面
                 git pull --rebase --autostash origin main
       
-                # 5. 最终推送，此时历史记录是一条平滑的直线
-                git push origin main
+                # 5. 💥 关键修复：将当前的游离状态 (HEAD) 推送到远程的 main 分支
+                git push origin HEAD:main
