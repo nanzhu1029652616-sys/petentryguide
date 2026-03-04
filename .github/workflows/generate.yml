@@ -1,49 +1,35 @@
 name: Generate Pages
 
 on:
-  workflow_dispatch:
   push:
-    paths:
-      - "topics.csv"
+    branches:
+      - main  # 只要 main 分支有变动（不管是改代码还是改 CSV），就自动跑
+  workflow_dispatch: # 依然保留手动按钮
 
 permissions:
-  contents: write
+  contents: write  # 必须开启写入权限，否则 Action 没法把生成的 HTML 推回仓库
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Setup Python
-        uses: actions/setup-python@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: '3.9'
 
       - name: Run generator
         run: python generate_site.py
-      
-      - name: Commit and Push generated pages
+
+      - name: Commit and push changes
         run: |
-                git config --global user.name "github-actions[bot]"
-                git config --global user.email "github-actions[bot]@users.noreply.github.com"
-      
-                # 1. 暂存所有变更
-                git add -A
-                
-                # 2. 检查是否有更新
-                if git diff --staged --quiet; then
-                  echo "No changes to commit, skipping push."
-                  exit 0
-                fi
-      
-                # 3. 提交变更（一定要带 [skip ci]）
-                git commit -m "auto generate pages [skip ci]"
-      
-                # 4. 把远程最新的代码拉下来，垫在我们刚刚生成的提交下面
-                git pull --rebase --autostash origin main
-      
-                # 5. 💥 关键修复：将当前的游离状态 (HEAD) 推送到远程的 main 分支
-                git push origin HEAD:main
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          # 只有在文件真的有变动时才提交，避免报错
+          git diff --quiet && git diff --staged --quiet || (git commit -m "auto generate pages [skip ci]" && git push)
