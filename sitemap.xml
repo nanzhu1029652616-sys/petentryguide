@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>https://petentryguide.com/</loc><lastmod>2026-03-04</lastmod><priority>1.0</priority></url>
+<url><loc>https://petentryguide.com/slug</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
+<url><loc>https://petentryguide.com/slug</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/china-to-usa-cat</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/china-to-usa-dog</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/pet-travel-cost-usa</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/japan-to-usa-cat</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/japan-to-usa-dog</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
-<url><loc>https://petentryguide.com/korea-to-usa-cat</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/korea-to-usa-dog</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/singapore-to-usa-cat</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/singapore-to-usa-dog</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
@@ -19,8 +20,6 @@
 <url><loc>https://petentryguide.com/eu-to-usa-cat</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/eu-to-usa-dog</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/mexico-to-usa-dog</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
-<url><loc>https://petentryguide.com/brazil-to-usa-dog</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
-<url><loc>https://petentryguide.com/india-to-usa-cat</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/india-to-usa-dog</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/philippines-to-usa-cat</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/philippines-to-usa-dog</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
@@ -30,7 +29,6 @@
 <url><loc>https://petentryguide.com/vietnam-to-usa-dog</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/malaysia-to-usa-cat</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/malaysia-to-usa-dog</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
-<url><loc>https://petentryguide.com/taiwan-to-usa-cat</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/taiwan-to-usa-dog</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/hongkong-to-usa-cat</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
 <url><loc>https://petentryguide.com/hongkong-to-usa-dog</loc><lastmod>2026-03-04</lastmod><priority>0.8</priority></url>
