@@ -24,7 +24,7 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 
 <h1>{title}</h1>
 
-<p>This guide explains everything you need to know about {title.lower()}.</p>
+<p>This guide explains everything you need to know about {title_lower}.</p>
 
 <h2>Requirements</h2>
 
@@ -111,8 +111,9 @@ def write_page(slug: str, title: str):
     canonical = f"{SITE}{path}"
     related = "\n      ".join([f'<li><a href="{href}">{text}</a></li>' for href, text in NAV_LINKS])
 
-    html = PAGE_TEMPLATE.format(
+   html = PAGE_TEMPLATE.format(
         title=title,
+        title_lower=title.lower(),  # 新增这一行：提前转换好小写
         desc=make_desc(title),
         canonical=canonical,
         today=TODAY,
