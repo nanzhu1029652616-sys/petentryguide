@@ -12,69 +12,63 @@ NAV_LINKS = [
     ("/pet-travel-cost-usa", "Cost to Bring a Pet to the USA"),
 ]
 
-PAGE_TEMPLATE = """<!DOCTYPE html>
+PAGE_template = """<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>{title} | Pet Entry Guide</title>
-  <meta name="description" content="{desc}" />
-  <link rel="canonical" href="{canonical}" />
+<meta charset="UTF-8">
+<title>{title} | Pet Entry Guide</title>
+<meta name="description" content="Complete guide: {title}. Requirements, documents, timeline and costs.">
 </head>
+
 <body>
-  <header>
-    <p><a href="/">Pet Entry Guide</a></p>
-    <hr />
-  </header>
 
-  <main>
-    <h1>{title}</h1>
-    <p><em>Last updated: {today}</em></p>
+<h1>{title}</h1>
 
-    <p>{intro}</p>
+<p>This guide explains everything you need to know about {title.lower()}.</p>
 
-    <h2>Quick requirements</h2>
-    <ul>
-      <li>Microchip (ISO compatible recommended)</li>
-      <li>Rabies vaccination (keep the certificate)</li>
-      <li>Veterinary health certificate (timing depends on airline/destination)</li>
-      <li>Airline-approved carrier or crate</li>
-    </ul>
+<h2>Requirements</h2>
 
-    <h2>Documents checklist</h2>
-    <ul>
-      <li>Rabies vaccination certificate</li>
-      <li>Health certificate from a licensed vet</li>
-      <li>Owner information + itinerary (helpful at check-in)</li>
-    </ul>
+<ul>
+<li>ISO compatible microchip</li>
+<li>Rabies vaccination</li>
+<li>Veterinary health certificate</li>
+<li>Airline approved pet crate</li>
+</ul>
 
-    <h2>Step-by-step</h2>
-    <ol>
-      <li>Confirm the latest entry rules for your pet type and origin country.</li>
-      <li>Microchip and verify it scans correctly.</li>
-      <li>Get rabies vaccination and keep readable records.</li>
-      <li>Book the flight and confirm in-cabin / checked / cargo policy.</li>
-      <li>Prepare the crate, label it, and arrive early for check-in.</li>
-    </ol>
+<h2>Step-by-Step Process</h2>
 
-    <h2>Common mistakes</h2>
-    <ul>
-      <li>Documents not matching pet name / microchip number</li>
-      <li>Wrong crate size or missing ventilation/labels</li>
-      <li>Booking without confirming pet quota on the flight</li>
-    </ul>
+<ol>
+<li>Microchip your pet</li>
+<li>Get rabies vaccination</li>
+<li>Prepare health certificate</li>
+<li>Book airline pet travel</li>
+<li>Prepare travel crate</li>
+</ol>
 
-    <hr />
-    <h2>Related guides</h2>
-    <ul>
-      {related_links}
-    </ul>
-  </main>
+<h2>Estimated Cost</h2>
 
-  <footer>
-    <hr />
-    <p>© {year} Pet Entry Guide</p>
-  </footer>
+<p>The cost of bringing a pet to the United States typically ranges from $800 to $4000 depending on airline, distance, and whether you use a relocation service.</p>
+
+<h2>Timeline</h2>
+
+<p>Most pet import preparation takes 1–3 months depending on vaccination timing and documentation.</p>
+
+<h2>FAQ</h2>
+
+<h3>Do pets need quarantine in the United States?</h3>
+<p>Most pets do not need quarantine if documentation and vaccinations are correct.</p>
+
+<h3>Can pets travel in cabin?</h3>
+<p>Many airlines allow small pets in cabin if they meet carrier size requirements.</p>
+
+<h2>Related Guides</h2>
+
+<ul>
+<li><a href="/usa-pet-import">USA Pet Import Rules</a></li>
+<li><a href="/pet-travel-cost-usa">Pet Travel Cost Guide</a></li>
+<li><a href="/pet-health-certificate">Pet Health Certificate Guide</a></li>
+</ul>
+
 </body>
 </html>
 """
