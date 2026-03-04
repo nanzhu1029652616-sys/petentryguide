@@ -12,9 +12,9 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
 <style>
     :root { --primary: #1a73e8; --text: #202124; --bg: #ffffff; }
-    body { font-family: 'Inter', sans-serif; line-height: 1.7; color: var(--text); max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+    body { font-family: 'Inter', -apple-system, sans-serif; line-height: 1.7; color: var(--text); max-width: 800px; margin: 0 auto; padding: 40px 20px; }
     .back-home { margin-bottom: 20px; display: inline-block; text-decoration: none; color: var(--primary); font-weight: 500; }
-    h1 { font-size: 2.5em; margin-bottom: 10px; }
+    h1 { font-size: 2.5em; margin-bottom: 10px; letter-spacing: -0.02em; }
     .meta { font-size: 0.9em; color: #70757a; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
     .content strong { color: var(--primary); background: #e8f0fe; padding: 2px 6px; border-radius: 4px; }
     .footer { margin-top: 80px; font-size: 0.85em; color: #70757a; text-align: center; border-top: 1px solid #eee; padding-top: 30px; }
@@ -25,12 +25,12 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
     <h1>[[TITLE]]</h1>
     <p class="meta">Expert Relocation Guide • Updated [[TODAY]]</p>
     <div class="content">[[BODY]]</div>
-    <div class="footer"><p>© 2026 Pet Entry Guide. Information based on current 2026 travel regulations.</p></div>
+    <div class="footer"><p>© 2026 Pet Entry Guide. Information based on 2026 regulations.</p></div>
 </body>
 </html>
 """
 
-# 2. 首页门户模板
+# 2. 首页门户模板 (包含搜索提示词和下拉框)
 INDEX_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,11 +43,25 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
     body { font-family: 'Inter', sans-serif; line-height: 1.6; color: var(--text); background: var(--bg); margin: 0; }
     .hero { background: white; border-bottom: 1px solid #dadce0; padding: 60px 20px; text-align: center; }
     .hero h1 { font-size: 3.2em; color: #1a0dab; margin-bottom: 10px; }
-    .search-container { margin: 30px auto; max-width: 500px; position: relative; }
+    
+    /* 搜索与下拉框容器 */
+    .controls-container { margin: 30px auto; max-width: 700px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    
+    .search-wrapper { position: relative; flex: 1; min-width: 300px; }
     #search-input { width: 100%; padding: 15px 45px; border: 1px solid #dadce0; border-radius: 30px; font-size: 1.1em; box-shadow: 0 1px 6px rgba(32,33,36,0.1); outline: none; box-sizing: border-box; }
+    
+    /* 下拉框样式 */
+    #country-select { padding: 0 20px; border: 1px solid #dadce0; border-radius: 30px; background: white; font-size: 1em; color: #5f6368; cursor: pointer; outline: none; box-shadow: 0 1px 6px rgba(32,33,36,0.1); }
+
+    /* 提示词 Chips 样式 */
+    .search-hints { margin-top: 15px; display: flex; gap: 8px; justify-content: center; font-size: 0.9em; color: #70757a; }
+    .hint-chip { cursor: pointer; color: var(--primary); background: #e8f0fe; padding: 4px 12px; border-radius: 15px; transition: 0.2s; }
+    .hint-chip:hover { background: #d2e3fc; }
+
     .nav-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 20px auto; max-width: 1000px; }
     .tag { background: white; border: 1px solid #dadce0; padding: 8px 16px; border-radius: 20px; text-decoration: none; color: #5f6368; font-size: 0.9em; transition: 0.2s; display: flex; align-items: center; }
     .tag:hover { border-color: var(--primary); color: var(--primary); }
+    
     .container { max-width: 1200px; margin: 0 auto; padding: 0 25px; }
     .section-title { font-size: 1.8em; margin: 50px 0 25px; display: flex; align-items: center; border-left: 5px solid var(--primary); padding-left: 15px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
@@ -56,32 +70,56 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
     .card h3 { margin: 0 0 10px 0; color: var(--primary); }
     .card p { margin: 0; font-size: 0.9em; color: #5f6368; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
     #no-results { text-align: center; padding: 50px; display: none; color: #70757a; }
+    .footer { text-align: center; padding: 80px; margin-top: 50px; border-top: 1px solid #eee; }
 </style>
 </head>
 <body>
 <div class="hero">
     <h1>Pet Entry Guide</h1>
-    <div class="search-container">
-        <input type="text" id="search-input" placeholder="Search guides (e.g., 'China', 'fees')...">
+    
+    <div class="controls-container">
+        <div class="search-wrapper">
+            <input type="text" id="search-input" placeholder="Search (e.g., 'China', 'fees')...">
+        </div>
+        
+        <select id="country-select">
+            <option value="">Jump to Country...</option>
+            [[SELECT_OPTIONS]]
+        </select>
     </div>
+
+    <div class="search-hints">
+        Suggested: 
+        <span class="hint-chip">Dog</span>
+        <span class="hint-chip">Cat</span>
+        <span class="hint-chip">Fee</span>
+        <span class="hint-chip">Microchip</span>
+        <span class="hint-chip">Permit</span>
+    </div>
+
     <div class="nav-tags">[[NAV_TAGS]]</div>
 </div>
+
 <div class="container" id="main-content">
     [[CONTENT_SECTIONS]]
     <div id="no-results">No guides found matching your search.</div>
 </div>
 
+<div class="footer"><p>© 2026 Pet Entry Guide. All rights reserved.</p></div>
+
 <script>
     const searchInput = document.getElementById('search-input');
+    const countrySelect = document.getElementById('country-select');
     const cards = document.querySelectorAll('.card');
     const titles = document.querySelectorAll('.section-title');
     const noResults = document.getElementById('no-results');
 
+    // 搜索过滤逻辑
     searchInput.addEventListener('input', (e) => {
         const term = e.target.value.toLowerCase();
         let foundAny = false;
 
-        titles.forEach((title, idx) => {
+        titles.forEach((title) => {
             const grid = title.nextElementSibling;
             let foundInGrid = false;
             grid.querySelectorAll('.card').forEach(card => {
@@ -93,6 +131,25 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
             grid.style.display = foundInGrid ? 'grid' : 'none';
         });
         noResults.style.display = foundAny ? 'none' : 'block';
+    });
+
+    // 提示词点击逻辑
+    document.querySelectorAll('.hint-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            searchInput.value = chip.textContent;
+            searchInput.dispatchEvent(new Event('input'));
+        });
+    });
+
+    // 下拉框跳转逻辑
+    countrySelect.addEventListener('change', (e) => {
+        const targetId = e.target.value;
+        if (targetId) {
+            document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
+            // 清空搜索以便看到跳转结果
+            searchInput.value = '';
+            searchInput.dispatchEvent(new Event('input'));
+        }
     });
 </script>
 </body>
@@ -121,21 +178,21 @@ def main():
         if info['name'] not in grouped: grouped[info['name']] = {'code': info['code'], 'items': []}
         grouped[info['name']]['items'].append({'slug': slug, 'title': title, 'content': content})
 
-        # 生成详情页
         page_html = PAGE_TEMPLATE.replace('[[TITLE]]', title).replace('[[TODAY]]', today).replace('[[BODY]]', content)
         with open(f"{slug}.html", 'w', encoding='utf-8') as f_out: f_out.write(page_html)
 
-    nav_tags, content_sections = "", ""
+    nav_tags, content_sections, select_options = "", "", ""
     for country in sorted(grouped.keys()):
         code = grouped[country]['code']
         nav_tags += f'<a href="#{country}" class="tag"><span class="fi fi-{code}"></span>&nbsp;{country}</a>'
+        select_options += f'<option value="{country}">{country}</option>'
         content_sections += f'<h2 class="section-title" id="{country}"><span class="fi fi-{code}"></span>&nbsp;{country}</h2><div class="grid">'
         for item in grouped[country]['items']:
-            snippet = item['content'].replace('<p>', '').replace('</p>', '')[:120] + "..."
+            snippet = item['content'].replace('<p>', '').replace('</p>', '').replace('<strong>', '').replace('</strong>', '')[:120] + "..."
             content_sections += f'<a href="{item["slug"]}.html" class="card"><h3>{item["title"]}</h3><p>{snippet}</p></a>'
         content_sections += '</div>'
 
-    index_html = INDEX_TEMPLATE.replace('[[NAV_TAGS]]', nav_tags).replace('[[CONTENT_SECTIONS]]', content_sections)
+    index_html = INDEX_TEMPLATE.replace('[[NAV_TAGS]]', nav_tags).replace('[[CONTENT_SECTIONS]]', content_sections).replace('[[SELECT_OPTIONS]]', select_options)
     with open('index.html', 'w', encoding='utf-8') as f_idx: f_idx.write(index_html)
     print(f"Success! Processed {len(rows)} pages.")
 
