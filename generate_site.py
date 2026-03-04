@@ -1,18 +1,48 @@
 import csv
 import os
-from datetime import date
+from datetime import datetime
 
-SITE = "https://petentryguide.com"
-TODAY = date.today().isoformat()
+# 1. 文章详情页模板 (转义了大括号以支持 CSS)
+PAGE_TEMPLATE = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{title} | Pet Entry Guide</title>
+<meta name="description" content="{desc}">
+<style>
+    :root {{ --primary: #1a73e8; --text: #202124; --bg: #ffffff; --card-bg: #f8f9fa; }}
+    body {{ 
+        font-family: 'Inter', -apple-system, sans-serif; 
+        line-height: 1.7; color: var(--text); background: var(--bg);
+        max-width: 760px; margin: 0 auto; padding: 40px 20px; 
+    }}
+    h1 {{ font-size: 2.2em; color: var(--text); line-height: 1.2; margin-bottom: 8px; }}
+    .meta {{ font-size: 0.9em; color: #70757a; margin-bottom: 30px; }}
+    .content {{ 
+        background: var(--bg); border: 1px solid #dadce0; border-radius: 12px; 
+        padding: 32px; margin: 24px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }}
+    .content strong {{ color: var(--primary); background: #e8f0fe; padding: 0 4px; border-radius: 4px; }}
+    .related-box {{ background: var(--card-bg); padding: 24px; border-radius: 8px; margin-top: 40px; }}
+    a {{ color: var(--primary); text-decoration: none; font-weight: 500; }}
+    .footer {{ margin-top: 60px; font-size: 0.85em; color: #70757a; text-align: center; border-top: 1px solid #eee; padding-top: 30px; }}
+</style>
+</head>
+<body>
+<h1>{title}</h1>
+<p class="meta">Updated: {today} • 2026 Guide</p>
+<div class="content">{article_body}</div>
+<div class="related-box">
+    <h3>Essential Resources</h3>
+    <ul>{related_links}</ul>
+</div>
+<div class="footer"><p>© 2026 Pet Entry Guide. All rights reserved.</p></div>
+</body>
+</html>
+"""
 
-# 导航链接
-NAV_LINKS = [
-    ("/usa-pet-import", "USA Pet Import Guide"),
-    ("/pet-travel-documents-checklist", "Pet Documents Checklist"),
-    ("/pet-travel-cost-usa", "Cost to Bring a Pet to the USA"),
-]
-
-# 专门为首页设计的模板
+# 2. 首页门户模板
 INDEX_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,149 +51,82 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 <title>Pet Entry Guide | 2026 International Pet Travel Portal</title>
 <style>
     :root {{ --primary: #1a73e8; --text: #202124; --bg: #f8f9fa; }}
-    body {{ 
-        font-family: 'Inter', -apple-system, sans-serif; 
-        line-height: 1.6; color: var(--text); background: var(--bg);
-        margin: 0; padding: 0; 
-    }}
-    .hero {{ 
-        background: white; border-bottom: 1px solid #dadce0; 
-        padding: 60px 20px; text-align: center; 
-    }}
-    .hero h1 {{ font-size: 2.8em; margin-bottom: 10px; letter-spacing: -0.03em; }}
-    .hero p {{ color: #70757a; font-size: 1.2em; max-width: 600px; margin: 0 auto; }}
-    
+    body {{ font-family: 'Inter', sans-serif; line-height: 1.6; color: var(--text); background: var(--bg); margin: 0; }}
+    .hero {{ background: white; border-bottom: 1px solid #dadce0; padding: 60px 20px; text-align: center; }}
+    .hero h1 {{ font-size: 2.8em; margin-bottom: 10px; }}
     .container {{ max-width: 1100px; margin: 40px auto; padding: 0 20px; }}
-    
-    /* 网格布局 */
-    .grid {{ 
-        display: grid; 
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-        gap: 20px; 
-    }}
-    
-    /* 卡片样式 */
+    .grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }}
     .card {{ 
         background: white; border: 1px solid #dadce0; border-radius: 12px; 
-        padding: 24px; transition: all 0.2s; text-decoration: none; color: inherit;
+        padding: 24px; transition: 0.2s; text-decoration: none; color: inherit;
         display: flex; flex-direction: column;
     }}
-    .card:hover {{ 
-        border-color: var(--primary); box-shadow: 0 4px 12px rgba(26,115,232,0.1); 
-        transform: translateY(-2px);
-    }}
-    .card h3 {{ margin: 0 0 10px 0; color: var(--primary); font-size: 1.25em; }}
+    .card:hover {{ border-color: var(--primary); box-shadow: 0 4px 12px rgba(26,115,232,0.1); transform: translateY(-2px); }}
+    .card h3 {{ margin: 0 0 10px 0; color: var(--primary); }}
     .card p {{ margin: 0; font-size: 0.9em; color: #5f6368; }}
-    
-    .footer {{ text-align: center; padding: 40px; color: #70757a; font-size: 0.9em; }}
 </style>
 </head>
 <body>
-
 <div class="hero">
     <h1>Pet Entry Guide</h1>
-    <p>Find specific requirements and expert relocation guides for your pet's journey to the USA (2026 Updated).</p>
+    <p>2026 Expert Relocation Guides for your pet's journey to the USA.</p>
 </div>
-
 <div class="container">
-    <div class="grid">
-        {index_items}
-    </div>
+    <div class="grid">{index_items}</div>
 </div>
-
-<div class="footer">
-    <p>© 2026 Pet Entry Guide. High-quality data for responsible pet owners.</p>
-</div>
-
 </body>
 </html>
 """
 
-SITEMAP_HEADER = """<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-"""
-SITEMAP_FOOTER = "</urlset>\n"
-
-def slug_to_path(slug: str) -> str:
-    return f"/{slug}"
-
-def make_desc(title: str) -> str:
-    return f"Complete 2026 requirements for {title}. Learn about microchips, vaccines, and documentation."
-
-def ensure_topics():
-    if not os.path.exists("topics.csv"):
-        raise FileNotFoundError("topics.csv not found.")
-
-def read_topics():
-    topics = []
-    with open("topics.csv", newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            slug = (row.get("slug") or "").strip()
-            title = (row.get("title") or "").strip()
-            # 获取内容列，如果没有这一列或内容为空，设为 None
-            content = row.get("content", "").strip()
-            if not slug or not title:
-                continue
-            topics.append((slug, title, content))
-    return topics
-
-def write_page(slug: str, title: str, content: str):
-    path = slug_to_path(slug)
-    canonical = f"{SITE}{path}"
-    related = "\n".join([f'    <li><a href="{href}">{text}</a></li>' for href, text in NAV_LINKS])
-
-    # 如果 content 为空，生成默认段落
-    article_body = content if content else f"<p>Bringing your pet to the United States involves several critical steps. For <strong>{title}</strong>, you must ensure all vaccinations are up to date and all documents are endorsed by the proper government agencies. This guide covers the essential timeline and requirements for a smooth arrival.</p>"
-
-    html = PAGE_TEMPLATE.format(
-        title=title,
-        desc=make_desc(title),
-        canonical=canonical,
-        today=TODAY,
-        article_body=article_body,
-        related_links=related,
-        year=str(date.today().year)
-    )
-
-    filename = f"{slug}.html"
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write(html)
-
-def write_index(topics):
-    links = "\n".join([f'    <li><a href="{slug_to_path(slug)}">{title}</a></li>' for slug, title, content in topics])
-    html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Pet Entry Guide | USA Pet Import 2026</title>
-  <style>body{{font-family:sans-serif; line-height:1.6; max-width:800px; margin:0 auto; padding:20px;}} a{{color:#1a73e8;}}</style>
-</head>
-<body>
-  <h1>Pet Entry Guide</h1>
-  <p>Find the specific requirements for your pet's journey to the USA:</p>
-  <ul>{links}</ul>
-</body>
-</html>"""
-    with open("index.html", "w", encoding="utf-8") as f:
-        f.write(html)
-
-def write_sitemap(topics):
-    items = [f"<url><loc>{SITE}/</loc><lastmod>{TODAY}</lastmod><priority>1.0</priority></url>"]
-    for slug, _, _ in topics:
-        items.append(f"<url><loc>{SITE}/{slug}</loc><lastmod>{TODAY}</lastmod><priority>0.8</priority></url>")
-    xml = SITEMAP_HEADER + "\n".join(items) + SITEMAP_FOOTER
-    with open("sitemap.xml", "w", encoding="utf-8") as f:
-        f.write(xml)
-
 def main():
-    ensure_topics()
-    topics = read_topics()
-    for slug, title, content in topics:
-        write_page(slug, title, content)
-    write_index(topics)
-    write_sitemap(topics)
-    print(f"Success! Processed {len(topics)} pages.")
+    if not os.path.exists('topics.csv'):
+        print("Error: topics.csv not found")
+        return
+
+    with open('topics.csv', 'r', encoding='utf-8') as f:
+        reader = csv.reader(f)
+        header = next(reader)
+        rows = list(reader)
+
+    today = datetime.now().strftime('%Y-%m-%d')
+    index_items = ""
+
+    # 生成各篇文章
+    for slug, title, content in rows:
+        if not slug or not title: continue
+        
+        # 为首页生成卡片内容 (截取正文前80字作为预览)
+        snippet = content.replace('<p>', '').replace('</p>', '').replace('<strong>', '').replace('</strong>', '')[:80] + "..."
+        index_items += f'''
+        <a href="{slug}.html" class="card">
+            <h3>{title}</h3>
+            <p>{snippet}</p>
+        </a>
+        '''
+
+        # 生成详情页链接列表
+        related = ""
+        for s, t, c in rows[:5]: # 随便展示前5个作为相关阅读
+            related += f'<li><a href="{s}.html">{t}</a></li>'
+
+        # 写入详情页
+        html = PAGE_TEMPLATE.format(
+            title=title,
+            desc=snippet,
+            today=today,
+            article_body=content,
+            related_links=related,
+            canonical=f"https://www.petentryguide.com/{slug}.html",
+            year="2026"
+        )
+        with open(f'{slug}.html', 'w', encoding='utf-8') as f_out:
+            f_out.write(html)
+
+    # 生成首页
+    with open('index.html', 'w', encoding='utf-8') as f_idx:
+        f_idx.write(INDEX_TEMPLATE.format(index_items=index_items))
+
+    print(f"Success! Processed {len(rows)} pages.")
 
 if __name__ == "__main__":
     main()
