@@ -12,7 +12,7 @@ NAV_LINKS = [
     ("/pet-travel-cost-usa", "Cost to Bring a Pet to the USA"),
 ]
 
-PAGE_template = """<!DOCTYPE html>
+PAGE_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
