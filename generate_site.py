@@ -20,11 +20,42 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 <meta name="description" content="{desc}">
 <link rel="canonical" href="{canonical}">
 <style>
-    body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }}
-    h1 {{ color: #1a73e8; border-bottom: 2px solid #eee; padding-bottom: 10px; }}
-    .content {{ background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee; margin: 20px 0; }}
-    .footer {{ margin-top: 40px; font-size: 0.9em; color: #666; border-top: 1px solid #eee; padding-top: 20px; }}
-    li {{ margin-bottom: 8px; }}
+    :root { --primary: #1a73e8; --text: #202124; --bg: #ffffff; --card-bg: #f8f9fa; }
+    body { 
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+        line-height: 1.7; color: var(--text); background: var(--bg);
+        max-width: 760px; margin: 0 auto; padding: 40px 20px; 
+    }
+    h1 { font-size: 2.2em; color: var(--text); line-height: 1.2; margin-bottom: 8px; letter-spacing: -0.02em; }
+    .meta { font-size: 0.9em; color: #70757a; margin-bottom: 30px; }
+    
+    /* 文章容器样式 */
+    .content { 
+        background: var(--bg); border: 1px solid #dadce0; border-radius: 12px; 
+        padding: 32px; margin: 24px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .content p { margin-bottom: 20px; }
+    .content strong { color: var(--primary); font-weight: 600; background: #e8f0fe; padding: 0 4px; border-radius: 4px; }
+    
+    /* 列表样式优化 */
+    ul, ol { padding-left: 20px; margin-bottom: 24px; }
+    li { margin-bottom: 12px; }
+    
+    /* 关联链接区域 */
+    .related-box { background: var(--card-bg); padding: 24px; border-radius: 8px; margin-top: 40px; }
+    .related-box h2 { font-size: 1.3em; margin-top: 0; color: var(--text); }
+    a { color: var(--primary); text-decoration: none; font-weight: 500; }
+    a:hover { text-decoration: underline; }
+    
+    /* 页脚 */
+    .footer { margin-top: 60px; font-size: 0.85em; color: #70757a; border-top: 1px solid #eee; padding-top: 30px; text-align: center; }
+    
+    /* 移动端适配 */
+    @media (max-width: 600px) {
+        body { padding: 20px 15px; }
+        .content { padding: 20px; }
+        h1 { font-size: 1.8em; }
+    }
 </style>
 </head>
 <body>
