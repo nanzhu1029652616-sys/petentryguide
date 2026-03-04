@@ -5,7 +5,7 @@ from datetime import date
 SITE = "https://petentryguide.com"
 TODAY = date.today().isoformat()
 
-# 你想要的内部链接（每篇文章底部都会放）
+# 你想要的内部链接（每篇文章底部都会自动生成）
 NAV_LINKS = [
     ("/usa-pet-import", "USA Pet Import Guide"),
     ("/pet-travel-documents-checklist", "Pet Documents Checklist"),
@@ -17,12 +17,15 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <title>{title} | Pet Entry Guide</title>
-<meta name="description" content="Complete guide: {title}. Requirements, documents, timeline and costs.">
+<meta name="description" content="{desc}">
+<link rel="canonical" href="{canonical}">
 </head>
 
 <body>
 
 <h1>{title}</h1>
+
+<p><em>Last updated: {today}</em></p>
 
 <p>This guide explains everything you need to know about {title_lower}.</p>
 
@@ -64,10 +67,10 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 <h2>Related Guides</h2>
 
 <ul>
-<li><a href="/usa-pet-import">USA Pet Import Rules</a></li>
-<li><a href="/pet-travel-cost-usa">Pet Travel Cost Guide</a></li>
-<li><a href="/pet-health-certificate">Pet Health Certificate Guide</a></li>
+{related_links}
 </ul>
+
+<p>© {year} Pet Entry Guide</p>
 
 </body>
 </html>
@@ -83,10 +86,7 @@ def slug_to_path(slug: str) -> str:
     return f"/{slug}"
 
 def make_desc(title: str) -> str:
-    return f"{title}. Requirements, documents, timeline, airline tips, and common mistakes."
-
-def make_intro(title: str) -> str:
-    return f"This page summarizes the key requirements and practical steps related to: {title}."
+    return f"Complete guide to {title}. Requirements, documents, timeline and costs."
 
 def ensure_topics():
     if not os.path.exists("topics.csv"):
@@ -109,17 +109,18 @@ def read_topics():
 def write_page(slug: str, title: str):
     path = slug_to_path(slug)
     canonical = f"{SITE}{path}"
-    related = "\n      ".join([f'<li><a href="{href}">{text}</a></li>' for href, text in NAV_LINKS])
+    # 生成底部的关联链接 HTML 列表
+    related = "\n".join([f'    <li><a href="{href}">{text}</a></li>' for href, text in NAV_LINKS])
 
+    # 填充模板
     html = PAGE_TEMPLATE.format(
         title=title,
-        title_lower=title.lower(),  # 新增这一行：提前转换好小写
+        title_lower=title.lower(),
         desc=make_desc(title),
         canonical=canonical,
         today=TODAY,
-        intro=make_intro(title),
         related_links=related,
-        year=str(date.today().year),
+        year=str(date.today().year)
     )
 
     filename = f"{slug}.html"
@@ -127,7 +128,7 @@ def write_page(slug: str, title: str):
         f.write(html)
 
 def write_index(topics):
-    links = "\n".join([f'<li><a href="{slug_to_path(slug)}">{title}</a></li>' for slug, title in topics])
+    links = "\n".join([f'    <li><a href="{slug_to_path(slug)}">{title}</a></li>' for slug, title in topics])
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -140,9 +141,9 @@ def write_index(topics):
 <body>
   <h1>Pet Entry Guide</h1>
   <p><em>Last updated: {TODAY}</em></p>
-  <p>Browse guides:</p>
+  <p>Browse our detailed guides:</p>
   <ul>
-    {links}
+{links}
   </ul>
 </body>
 </html>
@@ -158,9 +159,8 @@ def write_sitemap(topics):
   <lastmod>{TODAY}</lastmod>
   <changefreq>weekly</changefreq>
   <priority>1.0</priority>
-</url>
-""")
-    # 每个页面
+</url>""")
+    # 每个生成的页面
     for slug, _title in topics:
         url = f"{SITE}{slug_to_path(slug)}"
         items.append(f"""<url>
@@ -168,8 +168,8 @@ def write_sitemap(topics):
   <lastmod>{TODAY}</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.8</priority>
-</url>
-""")
+</url>""")
+    
     xml = SITEMAP_HEADER + "\n".join(items) + SITEMAP_FOOTER
     with open("sitemap.xml", "w", encoding="utf-8") as f:
         f.write(xml)
@@ -186,7 +186,7 @@ def main():
     write_index(topics)
     write_sitemap(topics)
 
-    print(f"Done. Generated {len(topics)} pages, plus index.html and sitemap.xml")
+    print(f"Success! Generated {len(topics)} pages, index.html, and sitemap.xml")
 
 if __name__ == "__main__":
     main()
