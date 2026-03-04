@@ -12,62 +12,67 @@ NAV_LINKS = [
     ("/pet-travel-cost-usa", "Cost to Bring a Pet to the USA"),
 ]
 
-PAGE_TEMPLATE = """<!DOCTYPE html>
+# 专门为首页设计的模板
+INDEX_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{title} | Pet Entry Guide</title>
-<meta name="description" content="{desc}">
-<link rel="canonical" href="{canonical}">
+<title>Pet Entry Guide | 2026 International Pet Travel Portal</title>
 <style>
-    :root {{ --primary: #1a73e8; --text: #202124; --bg: #ffffff; --card-bg: #f8f9fa; }}
+    :root {{ --primary: #1a73e8; --text: #202124; --bg: #f8f9fa; }}
     body {{ 
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-        line-height: 1.7; color: var(--text); background: var(--bg);
-        max-width: 760px; margin: 0 auto; padding: 40px 20px; 
+        font-family: 'Inter', -apple-system, sans-serif; 
+        line-height: 1.6; color: var(--text); background: var(--bg);
+        margin: 0; padding: 0; 
     }}
-    h1 {{ font-size: 2.2em; color: var(--text); line-height: 1.2; margin-bottom: 8px; letter-spacing: -0.02em; }}
-    .meta {{ font-size: 0.9em; color: #70757a; margin-bottom: 30px; }}
-    .content {{ 
-        background: var(--bg); border: 1px solid #dadce0; border-radius: 12px; 
-        padding: 32px; margin: 24px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    .hero {{ 
+        background: white; border-bottom: 1px solid #dadce0; 
+        padding: 60px 20px; text-align: center; 
     }}
-    .content p {{ margin-bottom: 20px; }}
-    .content strong {{ color: var(--primary); font-weight: 600; background: #e8f0fe; padding: 0 4px; border-radius: 4px; }}
-    ul, ol {{ padding-left: 20px; margin-bottom: 24px; }}
-    li {{ margin-bottom: 12px; }}
-    .related-box {{ background: var(--card-bg); padding: 24px; border-radius: 8px; margin-top: 40px; }}
-    .related-box h2 {{ font-size: 1.3em; margin-top: 0; color: var(--text); }}
-    a {{ color: var(--primary); text-decoration: none; font-weight: 500; }}
-    a:hover {{ text-decoration: underline; }}
-    .footer {{ margin-top: 60px; font-size: 0.85em; color: #70757a; border-top: 1px solid #eee; padding-top: 30px; text-align: center; }}
-    @media (max-width: 600px) {{
-        body {{ padding: 20px 15px; }}
-        .content {{ padding: 20px; }}
-        h1 {{ font-size: 1.8em; }}
+    .hero h1 {{ font-size: 2.8em; margin-bottom: 10px; letter-spacing: -0.03em; }}
+    .hero p {{ color: #70757a; font-size: 1.2em; max-width: 600px; margin: 0 auto; }}
+    
+    .container {{ max-width: 1100px; margin: 40px auto; padding: 0 20px; }}
+    
+    /* 网格布局 */
+    .grid {{ 
+        display: grid; 
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+        gap: 20px; 
     }}
+    
+    /* 卡片样式 */
+    .card {{ 
+        background: white; border: 1px solid #dadce0; border-radius: 12px; 
+        padding: 24px; transition: all 0.2s; text-decoration: none; color: inherit;
+        display: flex; flex-direction: column;
+    }}
+    .card:hover {{ 
+        border-color: var(--primary); box-shadow: 0 4px 12px rgba(26,115,232,0.1); 
+        transform: translateY(-2px);
+    }}
+    .card h3 {{ margin: 0 0 10px 0; color: var(--primary); font-size: 1.25em; }}
+    .card p {{ margin: 0; font-size: 0.9em; color: #5f6368; }}
+    
+    .footer {{ text-align: center; padding: 40px; color: #70757a; font-size: 0.9em; }}
 </style>
 </head>
 <body>
 
-<h1>{title}</h1>
-<p class="meta">Expertly reviewed on {today} • 5 min read</p>
-
-<div class="content">
-{article_body}
+<div class="hero">
+    <h1>Pet Entry Guide</h1>
+    <p>Find specific requirements and expert relocation guides for your pet's journey to the USA (2026 Updated).</p>
 </div>
 
-<div class="related-box">
-    <h2>Keep Reading: Essential Guides</h2>
-    <ul>
-    {related_links}
-    </ul>
+<div class="container">
+    <div class="grid">
+        {index_items}
+    </div>
 </div>
 
 <div class="footer">
-    <p>© {year} Pet Entry Guide. Information provided is based on 2026 regulations.</p>
-    <p>Always verify with your airline and local embassy before travel.</p>
+    <p>© 2026 Pet Entry Guide. High-quality data for responsible pet owners.</p>
 </div>
 
 </body>
