@@ -111,7 +111,7 @@ def write_page(slug: str, title: str):
     canonical = f"{SITE}{path}"
     related = "\n      ".join([f'<li><a href="{href}">{text}</a></li>' for href, text in NAV_LINKS])
 
-   html = PAGE_TEMPLATE.format(
+    html = PAGE_TEMPLATE.format(
         title=title,
         title_lower=title.lower(),  # 新增这一行：提前转换好小写
         desc=make_desc(title),
