@@ -16,72 +16,58 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title} | Pet Entry Guide</title>
 <meta name="description" content="{desc}">
 <link rel="canonical" href="{canonical}">
 <style>
-    :root { --primary: #1a73e8; --text: #202124; --bg: #ffffff; --card-bg: #f8f9fa; }
-    body { 
+    :root {{ --primary: #1a73e8; --text: #202124; --bg: #ffffff; --card-bg: #f8f9fa; }}
+    body {{ 
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
         line-height: 1.7; color: var(--text); background: var(--bg);
         max-width: 760px; margin: 0 auto; padding: 40px 20px; 
-    }
-    h1 { font-size: 2.2em; color: var(--text); line-height: 1.2; margin-bottom: 8px; letter-spacing: -0.02em; }
-    .meta { font-size: 0.9em; color: #70757a; margin-bottom: 30px; }
-    
-    /* 文章容器样式 */
-    .content { 
+    }}
+    h1 {{ font-size: 2.2em; color: var(--text); line-height: 1.2; margin-bottom: 8px; letter-spacing: -0.02em; }}
+    .meta {{ font-size: 0.9em; color: #70757a; margin-bottom: 30px; }}
+    .content {{ 
         background: var(--bg); border: 1px solid #dadce0; border-radius: 12px; 
         padding: 32px; margin: 24px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .content p { margin-bottom: 20px; }
-    .content strong { color: var(--primary); font-weight: 600; background: #e8f0fe; padding: 0 4px; border-radius: 4px; }
-    
-    /* 列表样式优化 */
-    ul, ol { padding-left: 20px; margin-bottom: 24px; }
-    li { margin-bottom: 12px; }
-    
-    /* 关联链接区域 */
-    .related-box { background: var(--card-bg); padding: 24px; border-radius: 8px; margin-top: 40px; }
-    .related-box h2 { font-size: 1.3em; margin-top: 0; color: var(--text); }
-    a { color: var(--primary); text-decoration: none; font-weight: 500; }
-    a:hover { text-decoration: underline; }
-    
-    /* 页脚 */
-    .footer { margin-top: 60px; font-size: 0.85em; color: #70757a; border-top: 1px solid #eee; padding-top: 30px; text-align: center; }
-    
-    /* 移动端适配 */
-    @media (max-width: 600px) {
-        body { padding: 20px 15px; }
-        .content { padding: 20px; }
-        h1 { font-size: 1.8em; }
-    }
+    }}
+    .content p {{ margin-bottom: 20px; }}
+    .content strong {{ color: var(--primary); font-weight: 600; background: #e8f0fe; padding: 0 4px; border-radius: 4px; }}
+    ul, ol {{ padding-left: 20px; margin-bottom: 24px; }}
+    li {{ margin-bottom: 12px; }}
+    .related-box {{ background: var(--card-bg); padding: 24px; border-radius: 8px; margin-top: 40px; }}
+    .related-box h2 {{ font-size: 1.3em; margin-top: 0; color: var(--text); }}
+    a {{ color: var(--primary); text-decoration: none; font-weight: 500; }}
+    a:hover {{ text-decoration: underline; }}
+    .footer {{ margin-top: 60px; font-size: 0.85em; color: #70757a; border-top: 1px solid #eee; padding-top: 30px; text-align: center; }}
+    @media (max-width: 600px) {{
+        body {{ padding: 20px 15px; }}
+        .content {{ padding: 20px; }}
+        h1 {{ font-size: 1.8em; }}
+    }}
 </style>
 </head>
 <body>
 
 <h1>{title}</h1>
-<p><em>Last updated: {today}</em></p>
+<p class="meta">Expertly reviewed on {today} • 5 min read</p>
 
 <div class="content">
 {article_body}
 </div>
 
-<h2>Essential Preparation</h2>
-<ul>
-    <li>ISO 11784/11785 compliant microchip</li>
-    <li>Rabies vaccination (at least 30 days before travel)</li>
-    <li>International health certificate (endorsed by local authorities)</li>
-    <li>IATA approved travel crate</li>
-</ul>
-
-<h2>Related Guides</h2>
-<ul>
-{related_links}
-</ul>
+<div class="related-box">
+    <h2>Keep Reading: Essential Guides</h2>
+    <ul>
+    {related_links}
+    </ul>
+</div>
 
 <div class="footer">
-    <p>© {year} Pet Entry Guide - Expert assistance for your pet's relocation to the USA.</p>
+    <p>© {year} Pet Entry Guide. Information provided is based on 2026 regulations.</p>
+    <p>Always verify with your airline and local embassy before travel.</p>
 </div>
 
 </body>
