@@ -4,75 +4,47 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bring a Cat from China to the USA (2026 Guide) | 2026 Pet Travel Dashboard</title>
 <style>
-    :root { --primary: #1a73e8; --warning: #f29900; --success: #1e8e3e; --text: #202124; --bg: #f8f9fa; }
-    body { font-family: 'Inter', sans-serif; line-height: 1.6; color: var(--text); background: var(--bg); margin: 0; }
-    .nav { background: white; border-bottom: 1px solid #dadce0; padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
-    .nav-inner { max-width: 1000px; margin: 0 auto; display: flex; font-size: 0.85em; color: #5f6368; }
-    .nav a { color: var(--primary); text-decoration: none; margin: 0 5px; }
-
-    .main { max-width: 1000px; margin: 25px auto; display: grid; grid-template-columns: 1fr 320px; gap: 25px; padding: 0 20px; }
+    :root { --primary: #1a73e8; --text: #202124; --bg: #ffffff; --accent: #f8f9fa; }
+    body { font-family: 'Inter', -apple-system, sans-serif; line-height: 1.7; color: var(--text); background: var(--bg); margin: 0; padding: 0; }
+    .nav { border-bottom: 1px solid #eee; padding: 15px 20px; background: white; position: sticky; top: 0; z-index: 100; }
+    .nav-inner { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; font-size: 0.9em; }
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 300px; gap: 30px; }
     
-    /* 顶部状态栏 */
-    .hero-card { background: white; padding: 35px; border-radius: 16px; border: 1px solid #dadce0; grid-column: 1 / -1; }
-    .complexity-badge { display: inline-block; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.85em; text-transform: uppercase; margin-bottom: 15px; }
-    .level-easy { background: #e6f4ea; color: #1e8e3e; }
-    .level-hard { background: #fef7e0; color: #b05a00; }
-
-    /* 仪表盘参数 */
-    .dashboard-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 25px; }
-    .tile { background: #f1f3f4; padding: 15px; border-radius: 10px; text-align: center; }
-    .tile-label { font-size: 0.75em; color: #5f6368; display: block; margin-bottom: 5px; }
-    .tile-value { font-weight: 700; font-size: 1em; color: var(--text); }
-
-    /* 交互式 Checklist */
-    .checklist-box { background: white; padding: 30px; border-radius: 16px; border: 1px solid #dadce0; margin-top: 25px; }
-    .todo-item { display: flex; align-items: flex-start; margin-bottom: 18px; cursor: pointer; }
-    .todo-item input { margin-top: 5px; margin-right: 15px; width: 18px; height: 18px; }
-    .todo-text { font-size: 1.05em; }
-    .todo-item input:checked + .todo-text { text-decoration: line-through; color: #9aa0a6; }
-
-    /* 侧边栏转化 */
-    .cta-sidebar { background: #1a73e8; color: white; padding: 25px; border-radius: 16px; height: fit-content; position: sticky; top: 80px; }
-    .cta-btn { width: 100%; padding: 12px; background: white; color: var(--primary); border: none; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 15px; }
+    .main-content { background: white; padding: 40px; border-radius: 16px; border: 1px solid #dadce0; }
+    .sidebar { background: #e8f0fe; padding: 25px; border-radius: 16px; height: fit-content; position: sticky; top: 80px; }
     
-    .footer { text-align: center; padding: 60px; color: #70757a; font-size: 0.9em; }
+    h1 { font-size: 2.4em; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 20px; }
+    .status-badge { background: #e6f4ea; color: #1e8e3e; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.85em; display: inline-block; margin-bottom: 15px; }
+    
+    .checklist { margin-top: 30px; padding: 20px; background: #fff; border: 1px solid #eee; border-radius: 12px; }
+    .todo { display: flex; align-items: center; margin-bottom: 12px; cursor: pointer; }
+    .todo input { margin-right: 12px; width: 18px; height: 18px; }
+    
+    .footer { margin-top: 80px; padding: 40px; text-align: center; border-top: 1px solid #eee; color: #70757a; font-size: 0.9em; }
+    @media (max-width: 800px) { .container { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
-    <div class="nav"><div class="nav-inner"><a href="/">Portal</a> / <a href="/#China">China</a> / Current Guide</div></div>
-    
-    <div class="main">
-        <div class="hero-card">
-            <span class="complexity-badge level-hard">Hard (Permit Req.)</span>
-            <h1 style="margin:0;font-size:2.4em;">Bring a Cat from China to the USA (2026 Guide)</h1>
-            
-            <div class="dashboard-grid">
-                <div class="tile"><span class="tile-label">Lead Time</span><span class="tile-value">6 Months+</span></div>
-                <div class="tile"><span class="tile-label">Quarantine</span><span class="tile-value">30 Days+</span></div>
-                <div class="tile"><span class="tile-label">Min. Age</span><span class="tile-value">6 Months</span></div>
-                <div class="tile"><span class="tile-label">Microchip</span><span class="tile-value">ISO Req.</span></div>
+    <div class="nav"><div class="nav-inner"><a href="/" style="color:var(--primary);text-decoration:none;font-weight:600;">Pet Entry Guide</a><span>2026 Guide</span></div></div>
+    <div class="container">
+        <div class="main-content">
+            <div class="status-badge">● Verified for 2026</div>
+            <h1>Bring a Cat from China to the USA (2026 Guide)</h1>
+            <div class="content"><p>Importing a cat from China in 2026 is relatively straightforward. <strong>Key requirements:</strong> You need an ISO-compliant 15-digit microchip and a valid rabies vaccination certificate. Most importantly, you must obtain an official <strong>Animal Health Certificate</strong> from the local Customs Bureau (Hai Guan) within 14 days of your flight. Cats do not require a rabies titer test or a CDC permit for US entry.</p></div>
+            <div class="checklist">
+                <h3>Action Checklist</h3>
+                <label class="todo"><input type="checkbox"> 15-digit ISO Microchip</label>
+                <label class="todo"><input type="checkbox"> Valid Rabies Certificate</label>
+                <label class="todo"><input type="checkbox"> Endorsed Export Health Certificate</label>
+                <label class="todo"><input type="checkbox"> CDC Import Form (if required)</label>
             </div>
         </div>
-
-        <div class="content-area">
-            <div class="checklist-box">
-                <h2 style="margin-top:0;">Your Action Checklist</h2>
-                <label class="todo-item"><input type="checkbox"><span class="todo-text">ISO Microchip</span></label><label class="todo-item"><input type="checkbox"><span class="todo-text">Rabies Vaccine</span></label><label class="todo-item"><input type="checkbox"><span class="todo-text">Health Certificate</span></label><label class="todo-item"><input type="checkbox"><span class="todo-text">CDC/USDA Form</span></label>
-            </div>
-            
-            <div style="background:white; padding:30px; border-radius:16px; border:1px solid #dadce0; margin-top:25px;">
-                <h2>Deep Guide</h2>
-                <div class="article-body"><p>Importing a cat from China in 2026 is relatively straightforward. <strong>Key requirements:</strong> You need an ISO-compliant 15-digit microchip and a valid rabies vaccination certificate. Most importantly, you must obtain an official <strong>Animal Health Certificate</strong> from the local Customs Bureau (Hai Guan) within 14 days of your flight. Cats do not require a rabies titer test or a CDC permit for US entry.</p></div>
-            </div>
-        </div>
-
-        <div class="cta-sidebar">
-            <h3 style="margin-top:0;">Need 1-on-1 Help?</h3>
-            <p style="font-size:0.9em; opacity:0.9;">Complex route? Our IPATA-certified experts can handle the paperwork for you.</p>
-            <button class="cta-btn" onclick="location.href='mailto:help@petentryguide.com'">Request Expert Help</button>
-            <p style="font-size:0.8em; margin-top:20px; opacity:0.7;">Verified Data Source: CDC/USDA official portals.</p>
+        <div class="sidebar">
+            <h3 style="margin-top:0;">Route Info</h3>
+            <p><strong>Lead Time:</strong> 30 - 180 Days</p>
+            <p><strong>Quarantine:</strong> 30 Days+</p>
+            <button onclick="window.print()" style="width:100%;padding:12px;background:var(--primary);color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Save as PDF</button>
         </div>
     </div>
-    <div class="footer">© 2026 Pet Entry Guide. Not legal advice.</div>
 </body>
 </html>
