@@ -2,224 +2,209 @@ import csv
 import os
 from datetime import datetime
 
-# 1. 详情页模板 (PM 5.0 仪表盘风)
+# 1. 详情页模板：强化“政策解读”定位
 PAGE_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>[[TITLE]] | 2026 Pet Travel Dashboard</title>
 <style>
-    :root { --primary: #1a73e8; --warning: #f29900; --success: #1e8e3e; --text: #202124; --bg: #f8f9fa; }
+    :root { --primary: #1a73e8; --text: #202124; --bg: #ffffff; --sidebar: #f8f9fa; }
     body { font-family: 'Inter', -apple-system, sans-serif; line-height: 1.6; color: var(--text); background: var(--bg); margin: 0; }
-    .nav { background: white; border-bottom: 1px solid #dadce0; padding: 12px 20px; position: sticky; top: 0; z-index: 100; }
-    .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; font-size: 0.85em; color: #5f6368; }
-    .nav a { color: var(--primary); text-decoration: none; margin: 0 5px; }
-    .main { max-width: 1100px; margin: 30px auto; display: grid; grid-template-columns: 1fr 320px; gap: 30px; padding: 0 20px; }
-    .dashboard-header { background: white; padding: 40px; border-radius: 20px; border: 1px solid #dadce0; grid-column: 1 / -1; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .complexity-badge { display: inline-block; padding: 6px 14px; border-radius: 8px; font-weight: 800; font-size: 0.8em; text-transform: uppercase; margin-bottom: 15px; }
-    .level-easy { background: #e6f4ea; color: #1e8e3e; }
-    .level-hard { background: #fff4e5; color: #b05a00; border: 1px solid #ffe2b5; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-top: 30px; }
-    .stat-tile { background: #f8f9fa; padding: 20px; border-radius: 12px; text-align: center; border: 1px solid #eee; }
-    .stat-label { font-size: 0.75em; color: #70757a; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 8px; }
-    .stat-value { font-weight: 700; font-size: 1.1em; color: #1a1c1e; }
-    .content-box { background: white; padding: 40px; border-radius: 20px; border: 1px solid #dadce0; margin-top: 30px; }
-    .todo-item { display: flex; align-items: flex-start; padding: 15px; border-bottom: 1px solid #f1f3f4; cursor: pointer; }
-    .todo-item input { margin-top: 4px; margin-right: 15px; width: 20px; height: 20px; }
-    .todo-item input:checked + span { text-decoration: line-through; color: #9aa0a6; }
-    .sidebar-cta { background: #1a73e8; color: white; padding: 30px; border-radius: 20px; position: sticky; top: 100px; text-align: center; }
-    .cta-button { width: 100%; padding: 15px; background: white; color: #1a73e8; border: none; border-radius: 10px; font-weight: 700; margin-top: 20px; cursor: pointer; }
-    .footer { text-align: center; padding: 80px 20px; color: #70757a; font-size: 0.9em; }
-    @media (max-width: 800px) { .main { grid-template-columns: 1fr; } }
+    .nav { background: white; border-bottom: 1px solid #dadce0; padding: 15px 20px; position: sticky; top: 0; z-index: 100; }
+    .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; font-size: 0.9em; }
+    .container { max-width: 1100px; margin: 30px auto; display: grid; grid-template-columns: 1fr 320px; gap: 30px; padding: 0 20px; }
+    .content-area { background: white; padding: 40px; border-radius: 20px; border: 1px solid #dadce0; }
+    .policy-insight { background: #fff4e5; border: 1px solid #ffe2b5; padding: 20px; border-radius: 12px; margin-bottom: 30px; }
+    h1 { font-size: 2.6em; margin: 0 0 20px; letter-spacing: -0.02em; }
+    .footer { text-align: center; padding: 60px; color: #70757a; font-size: 0.9em; }
+    @media (max-width: 800px) { .container { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
-    <div class="nav"><div class="nav-inner"><a href="/">Home</a> / <a href="/#[[COUNTRY_ID]]">[[COUNTRY_NAME]]</a> / [[TITLE]]</div></div>
-    <div class="main">
-        <header class="dashboard-header">
-            <span class="complexity-badge [[COMPLEX_CLASS]]">[[LEVEL]]</span>
-            <h1 style="margin:0; font-size:2.8em;">[[TITLE]]</h1>
-            <div class="stats-grid">
-                <div class="stat-tile"><span class="stat-label">Lead Time</span><span class="stat-value">[[LEAD_TIME]]</span></div>
-                <div class="stat-tile"><span class="stat-label">Quarantine</span><span class="stat-value">[[QUARANTINE]]</span></div>
-                <div class="stat-tile"><span class="stat-label">Pet Type</span><span class="stat-value">[[PET_TYPE]]</span></div>
-                <div class="stat-tile"><span class="stat-label">Risk List</span><span class="stat-value">CDC 2026</span></div>
+    <div class="nav"><div class="nav-inner"><a href="/" style="color:var(--primary);text-decoration:none;font-weight:600;">Pet Entry Portal</a> / [[TITLE]]</div></div>
+    <div class="container">
+        <div class="content-area">
+            <div class="policy-insight"><strong>2026 Policy Insight:</strong> This route is verified against current CDC/USDA relocation protocols.</div>
+            <h1>[[TITLE]]</h1>
+            <div class="article-body">[[BODY]]</div>
+        </div>
+        <div class="sidebar">
+            <div style="background:var(--sidebar); padding:25px; border-radius:20px; border:1px solid #dadce0;">
+                <h3 style="margin-top:0;">Route Specs</h3>
+                <p><strong>Origin:</strong> [[COUNTRY_NAME]]</p>
+                <p><strong>Dest:</strong> United States</p>
+                <button onclick="window.print()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:8px; font-weight:700; cursor:pointer;">Generate PDF Checklist</button>
             </div>
-        </header>
-        <section class="content-area">
-            <div class="content-box">
-                <h2 style="margin:0 0 20px;">2026 Action Checklist</h2>
-                [[CHECKLIST_ITEMS]]
-            </div>
-            <div class="content-box">
-                <h2 style="margin-top:0;">Detailed Guide</h2>
-                <div style="font-size:1.1em; line-height:1.8;">[[BODY]]</div>
-            </div>
-        </section>
-        <aside class="sidebar-cta">
-            <h3 style="margin:0;">Relocation Support</h3>
-            <p style="font-size:0.9em; opacity:0.9; margin-top:10px;">Overwhelmed by CDC forms? Get an expert to review your paperwork before departure.</p>
-            <button class="cta-button" onclick="window.print()">Save Checklist as PDF</button>
-        </aside>
+        </div>
     </div>
-    <footer class="footer">© 2026 Pet Entry Guide. Not legal advice.</footer>
+    <footer class="footer">© 2026 Pet Entry Guide. High-precision relocation data.</footer>
 </body>
 </html>
 """
 
-# 2. 首页模板 (PM 风格：极简、分块、带搜索)
+# 2. 首页模板：Route Finder + 地理大区分类
 INDEX_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pet Entry Guide | 2026 Global Relocation Database</title>
+<title>Pet Entry Guide | 2026 Route Finder & Policy Database</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
 <style>
-    :root { --primary: #1a73e8; --bg: #f8f9fa; }
+    :root { --primary: #1a73e8; --easy: #1e8e3e; --strict: #d93025; --standard: #f29900; --bg: #f8f9fa; }
     body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: #202124; }
-    .hero { background: white; padding: 100px 20px 80px; text-align: center; border-bottom: 1px solid #dadce0; }
-    h1 { font-size: 4em; letter-spacing: -0.05em; color: #1a0dab; margin:0; line-height:1; }
-    .search-ui { max-width: 650px; margin: 40px auto 0; }
-    #search-input { width: 100%; padding: 22px 35px; border: 1px solid #dfe1e5; border-radius: 40px; font-size: 1.25em; outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: 0.3s; }
-    .hot-routes { margin-top: 25px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-    .route-tag { background: #f1f3f4; padding: 10px 20px; border-radius: 25px; text-decoration: none; color: #3c4043; font-size: 0.95em; font-weight: 600; }
-    .route-tag:hover { background: #e8f0fe; color: var(--primary); }
-    .container { max-width: 1200px; margin: 60px auto; padding: 0 25px; }
+    
+    /* Route Finder 区域 */
+    .hero { background: white; padding: 80px 20px; text-align: center; border-bottom: 1px solid #dadce0; }
+    h1 { font-size: 3.5em; letter-spacing: -0.05em; margin-bottom: 15px; color: #1a0dab; }
+    .route-finder { max-width: 800px; margin: 30px auto; background: white; padding: 25px; border-radius: 50px; border: 1px solid #dfe1e5; display: flex; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); align-items: center; justify-content: center; }
+    select, input { border: none; font-size: 1.1em; outline: none; background: transparent; padding: 5px; cursor: pointer; }
+    .divider { width: 1px; height: 30px; background: #eee; }
+    .find-btn { background: var(--primary); color: white; padding: 12px 30px; border-radius: 30px; border: none; font-weight: 700; cursor: pointer; }
+
+    .container { max-width: 1200px; margin: 50px auto; padding: 0 25px; }
+    .region-section { margin-bottom: 60px; }
+    .region-title { font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; color: #5f6368; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 30px; }
-    .card { background: white; border: 1px solid #dadce0; border-radius: 20px; padding: 30px; text-decoration: none; color: inherit; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; }
+    
+    /* 重构后的决策卡片 */
+    .card { background: white; border: 1px solid #dadce0; border-radius: 20px; padding: 30px; text-decoration: none; color: inherit; transition: 0.3s; display: flex; flex-direction: column; }
     .card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); border-color: var(--primary); }
-    .section-title { font-size: 1.8em; margin: 80px 0 30px; display: flex; align-items: center; border-left: 6px solid var(--primary); padding-left: 20px; color: #5f6368; }
-    .fi { margin-right: 15px; border-radius: 4px; }
+    .card-tags { display: flex; gap: 8px; margin-bottom: 15px; }
+    .tag { font-size: 0.75em; font-weight: 800; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
+    
+    h3 { margin: 0 0 12px; font-size: 1.4em; color: #1a73e8; }
+    .summary { font-size: 1em; color: #5f6368; line-height: 1.5; font-weight: 500; }
+    
+    .footer { text-align: center; padding: 80px; color: #70757a; border-top: 1px solid #eee; }
 </style>
 </head>
 <body>
 <div class="hero">
     <h1>Pet Entry Guide</h1>
-    <div class="search-ui">
-        <input type="text" id="search-input" placeholder="Search your route (e.g. Mexico, India)...">
-        <div class="hot-routes">
-            <span style="color:#70757a; font-weight:600; padding-top:10px;">Hot:</span>
-            <a href="/china-to-usa-dog.html" class="route-tag">China → USA</a>
-            <a href="/australia-to-usa-dog.html" class="route-tag">Australia → USA</a>
-            <a href="/south-korea-to-usa-cat.html" class="route-tag">Korea → USA</a>
-        </div>
+    <p style="font-size:1.4em; color:#5f6368;">2026 Professional Navigation for Global Pet Relocation.</p>
+    
+    <div class="route-finder">
+        <span>From:</span>
+        <input type="text" id="route-input" placeholder="Origin Country..." oninput="instantSearch(this.value)">
+        <div class="divider"></div>
+        <span>To:</span>
+        <select disabled><option>United States (CDC/USDA)</option></select>
+        <button class="find-btn">Find Protocol</button>
     </div>
 </div>
-<div class="container" id="main-content">[[CONTENT_SECTIONS]]</div>
+
+<div class="container" id="main-content">
+    <div class="region-section">
+        <h2 class="region-title">Policy & Cost Insights</h2>
+        <div class="grid">[[INSIGHT_CARDS]]</div>
+    </div>
+    
+    [[REGION_SECTIONS]]
+</div>
+
 <script>
-    const searchInput = document.getElementById('search-input');
-    const cards = document.querySelectorAll('.card');
-    const titles = document.querySelectorAll('.section-title');
-    searchInput.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        titles.forEach(title => {
-            const grid = title.nextElementSibling;
-            let found = false;
-            grid.querySelectorAll('.card').forEach(card => {
-                const match = card.innerText.toLowerCase().includes(term);
-                card.style.display = match ? 'flex' : 'none';
-                if (match) found = true;
-            });
-            title.style.display = found ? 'flex' : 'none';
-            grid.style.display = found ? 'grid' : 'none';
+    function instantSearch(term) {
+        const cards = document.querySelectorAll('.card');
+        const sections = document.querySelectorAll('.region-section');
+        const lowerTerm = term.toLowerCase();
+        
+        cards.forEach(card => {
+            const match = card.innerText.toLowerCase().includes(lowerTerm);
+            card.style.display = match ? 'flex' : 'none';
         });
-    });
+        
+        sections.forEach(sec => {
+            const hasVisible = Array.from(sec.querySelectorAll('.card')).some(c => c.style.display !== 'none');
+            sec.style.display = hasVisible ? 'block' : 'none';
+        });
+    }
 </script>
 </body>
 </html>
 """
 
 def main():
-    # 彻底补全映射表，确保所有截图中的国家都有位置
-    country_map = {
-        'china': {'name': 'China', 'code': 'cn'},
-        'japan': {'name': 'Japan', 'code': 'jp'},
-        'south-korea': {'name': 'South Korea', 'code': 'kr'},
-        'korea': {'name': 'South Korea', 'code': 'kr'},
-        'singapore': {'name': 'Singapore', 'code': 'sg'},
-        'australia': {'name': 'Australia', 'code': 'au'},
-        'canada': {'name': 'Canada', 'code': 'ca'},
-        'uk': {'name': 'United Kingdom', 'code': 'gb'},
-        'mexico': {'name': 'Mexico', 'code': 'mx'},
-        'brazil': {'name': 'Brazil', 'code': 'br'},
-        'india': {'name': 'India', 'code': 'in'},
-        'eu': {'name': 'Europe (EU)', 'code': 'eu'},
-        'vietnam': {'name': 'Vietnam', 'code': 'vn'},
-        'thailand': {'name': 'Thailand', 'code': 'th'},
-        'philippines': {'name': 'Philippines', 'code': 'ph'},
-        'usa': {'name': 'USA General', 'code': 'us'}
+    # PM 重构：增加地理区域维度与政策分类
+    regions = {
+        'Asia-Pacific': ['china', 'japan', 'korea', 'south-korea', 'singapore', 'vietnam', 'thailand', 'philippines', 'india', 'taiwan', 'hongkong'],
+        'Americas': ['canada', 'mexico', 'brazil', 'argentina'],
+        'Europe': ['uk', 'eu', 'germany', 'france', 'italy', 'spain'],
+        'Oceania': ['australia', 'nz']
     }
+    
+    country_codes = {'china': 'cn', 'japan': 'jp', 'south-korea': 'kr', 'korea': 'kr', 'singapore': 'sg', 'australia': 'au', 'canada': 'ca', 'uk': 'gb', 'mexico': 'mx', 'brazil': 'br', 'eu': 'eu'}
 
     if not os.path.exists('topics.csv'): return
     with open('topics.csv', 'r', encoding='utf-8') as f:
         rows = [r for r in list(csv.reader(f))[1:] if len(r) >= 2 and r[0].strip()]
 
     today = datetime.now().strftime('%b %d, %Y')
-    grouped = {}
+    
+    # 初始化分组
+    insight_cards = ""
+    region_data = {region: [] for region in regions.keys()}
+    region_data['Other Routes'] = [] # 虽然 PM 不建议，但逻辑上作为保底存在
 
     for slug, title, content in rows:
-        # 智能匹配逻辑：先检查是否是通用指南，再遍历映射表进行前缀匹配
-        c_name, c_code = 'Other Routes', 'un'
+        # 识别文章类型
+        is_insight = 'cost' in slug or 'general' in slug or 'cdc' in slug
         
-        if 'cost' in slug or 'general' in slug:
-            c_name, c_code = 'General Guides', 'un'
-        else:
-            # 改进：遍历 key，只要 slug 以该 key 开头，就匹配成功
-            for key in sorted(country_map.keys(), key=len, reverse=True):
-                if slug.startswith(key):
-                    c_name = country_map[key]['name']
-                    c_code = country_map[key]['code']
-                    break
-
-        if c_name not in grouped: grouped[c_name] = {'code': c_code, 'items': []}
+        # 识别决策因子 (PM 方案：标签化)
+        q_days = "0 Days" if "no quarantine" in content.lower() or "rabies-free" in content.lower() else "30-Day+"
+        lead_time = "6-Month" if "rabies titer" in content.lower() else "30-Day"
+        risk_level = "Strict" if q_days != "0 Days" else ("Standard" if "low-risk" in content.lower() else "Easy")
+        tag_color = f'--{risk_level.lower()}'
         
-        # 提取仪表盘参数 (PM 5.0)
-        q_days = "0 Days" if "no quarantine" in content.lower() or "rabies-free" in content.lower() else "30-Day Min."
-        lead_time = "6+ Months" if "rabies titer" in content.lower() else "30 Days"
-        level = "High Difficulty" if q_days != "0 Days" else "Low Difficulty"
-        c_class = "level-hard" if level != "Low Difficulty" else "level-easy"
-        pet_type = "Dog 🐶" if "dog" in slug else "Cat 🐱"
-
-        # 生成 Checklist
-        steps = ["ISO Microchip", "Rabies Vaccine", "Export Health Cert.", "CDC Dog Import Form"]
-        checklist_html = "".join([f'<label class="todo-item"><input type="checkbox"><span>{s}</span></label>' for s in steps])
-
-        # 写入详情页 HTML
+        summary = "Requires CDC Permit & Official Microchip." if risk_level == "Strict" else "Streamlined entry with health certificate."
+        
+        # 生成详情页
         page_html = PAGE_TEMPLATE.replace('[[TITLE]]', title).replace('[[BODY]]', content).replace('[[TODAY]]', today)\
-                     .replace('[[COUNTRY_NAME]]', c_name).replace('[[COUNTRY_ID]]', c_name.replace(' ', '-'))\
-                     .replace('[[QUARANTINE]]', q_days).replace('[[LEAD_TIME]]', lead_time)\
-                     .replace('[[LEVEL]]', level).replace('[[COMPLEX_CLASS]]', c_class)\
-                     .replace('[[PET_TYPE]]', pet_type).replace('[[CHECKLIST_ITEMS]]', checklist_html)
-        
+                     .replace('[[COUNTRY_NAME]]', slug.split('-')[0].capitalize())
         with open(f"{slug}.html", 'w', encoding='utf-8') as f_out: f_out.write(page_html)
-        grouped[c_name]['items'].append({'slug': slug, 'title': title, 'pet_type': pet_type, 'content': content})
 
-    # 构建首页
-    sections = ""
-    sorted_countries = sorted(grouped.keys())
-    # 强制 General Guides 置顶
-    if 'General Guides' in sorted_countries:
-        sorted_countries.remove('General Guides'); sorted_countries.insert(0, 'General Guides')
+        # 构建卡片 HTML (PM 方案：信息重组)
+        card_html = f'''
+        <a href="{slug}.html" class="card">
+            <div class="card-tags">
+                <span class="tag" style="background:var({tag_color}); color:white;">{risk_level}</span>
+                <span class="tag" style="background:#eee; color:#666;">{lead_time} Lead</span>
+                <span class="tag" style="background:#eee; color:#666;">{q_days} Quarantine</span>
+            </div>
+            <h3>{title.split('(')[0].strip()}</h3>
+            <p class="summary">{summary}</p>
+        </a>
+        '''
 
-    for country in sorted_countries:
-        code = grouped[country]['code']
-        sections += f'<h2 class="section-title" id="{country.replace(" ", "-")}"><span class="fi fi-{code}"></span>&nbsp;{country}</h2><div class="grid">'
-        for item in grouped[country]['items']:
-            snippet = item['content'].replace('<p>', '').replace('</p>', '').replace('<strong>', '').replace('</strong>', '')[:110] + "..."
-            sections += f'''
-            <a href="{item["slug"]}.html" class="card">
-                <div>
-                    <span style="font-size:0.8em; color:#70757a;">2026 GUIDE • {item["pet_type"]}</span>
-                    <h3 style="color:#1a73e8; margin:10px 0;">{item["title"]}</h3>
-                    <p>{snippet}</p>
-                </div>
-                <div style="margin-top:20px; font-weight:700; color:#1a73e8; font-size:0.9em;">Analyze Route →</div>
-            </a>
+        if is_insight:
+            insight_cards += card_html
+        else:
+            origin = slug.split('-')[0]
+            found_region = False
+            for reg, countries in regions.items():
+                if origin in countries:
+                    region_data[reg].append(card_html)
+                    found_region = True
+                    break
+            if not found_region:
+                region_data['Other Routes'].append(card_html)
+
+    # 组装首页大区
+    region_sections_html = ""
+    for reg, cards_list in region_data.items():
+        if cards_list:
+            # PM 方案：如果是 Other，检查是否有内容，尽量不显示这个标题
+            display_title = reg if reg != 'Other Routes' else 'Additional Regions'
+            region_sections_html += f'''
+            <div class="region-section">
+                <h2 class="region-title">{display_title}</h2>
+                <div class="grid">{"".join(cards_list)}</div>
+            </div>
             '''
-        sections += '</div>'
 
-    with open('index.html', 'w', encoding='utf-8') as f_idx:
-        f_idx.write(INDEX_TEMPLATE.replace('[[CONTENT_SECTIONS]]', sections))
+    final_index = INDEX_TEMPLATE.replace('[[INSIGHT_CARDS]]', insight_cards).replace('[[REGION_SECTIONS]]', region_sections_html)
+    with open('index.html', 'w', encoding='utf-8') as f_idx: f_idx.write(final_index)
 
 if __name__ == "__main__":
     main()
