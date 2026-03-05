@@ -1,50 +1,38 @@
 import os
 import json
+import csv  # 新增事实：导入 Python 内置的 csv 模块
 from datetime import datetime
 
 # ==========================================
-# 1. 核心数据模型 (引入核心决策因子参数)
+# 1. 核心数据模型 (从 CSV 动态读取)
 # ==========================================
-ROUTES_DATA = [
-    {
-        "from_country": "China", "to_country": "USA", "pet_type": "cat",
-        "slug": "china-to-usa-cat",
-        "title": "Bring a Cat from China to the USA (2026)",
-        "summary": "Importing a cat from China to the United States.",
-        "risk_level": "Standard", "prep_time": "30 Days", "quarantine": "None",
-        "min_age": "6 months", "microchip": "ISO 11784/85",
-        "rabies_vaccine": "Required", 
-        "process_steps": [
-            "T-30 Days: Microchip the pet", 
-            "T-28 Days: Administer rabies vaccination",
-            "T-10 Days: Obtain export health certificate", 
-            "Arrival: Customs declaration"
-        ],
-        "required_documents": ["Export Health Certificate", "Rabies Vaccination Certificate"],
-        "tips": ["Health certificates must be endorsed by government veterinarians."]
-    },
-    {
-        "from_country": "China", "to_country": "USA", "pet_type": "dog",
-        "slug": "china-to-usa-dog",
-        "title": "Bring a Dog from China to the USA (2026)",
-        "summary": "Strict CDC requirements apply for high-risk countries.",
-        "risk_level": "High-Risk", "prep_time": "6 Months", "quarantine": "None (if criteria met)",
-        "min_age": "6 months", "microchip": "ISO 11784/85",
-        "rabies_vaccine": "Required + Titer Test", 
-        "process_steps": [
-            "T-6 Months: Microchip & Rabies vaccination", 
-            "T-1 to 3 Months: Pass Rabies Titer Test (FAVN)",
-            "T-30 Days: Apply for CDC Dog Import Permit online", 
-            "T-10 Days: Obtain official export health certificate", 
-            "Arrival: Enter through approved US port"
-        ],
-        "required_documents": ["CDC Dog Import Permit", "Titer Test Results", "Export Health Certificate", "Rabies Certificate"],
-        "tips": ["China is on the CDC high-risk list. The Rabies Titer Test must be done at an approved lab. Missing the CDC Permit will result in deportation."]
-    }
-]
+def load_routes_from_csv(file_path="routes.csv"):
+    """逻辑：读取外部 CSV 文件，并将特定字段还原为列表"""
+    routes = []
+    
+    if not os.path.exists(file_path):
+        print(f"警告：未找到数据源 {file_path}")
+        return routes
+        
+    with open(file_path, mode='r', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            # 核心逻辑：将 CSV 中用 "|" 分隔的纯文本字符串，拆分成 HTML 渲染需要的列表 (List)
+            row['process_steps'] = row['process_steps'].split('|') if row['process_steps'] else []
+            row['required_documents'] = row['required_documents'].split('|') if row['required_documents'] else []
+            row['vaccines'] = row['vaccines'].split('|') if row['vaccines'] else []
+            row['travel_methods'] = row['travel_methods'].split('|') if row['travel_methods'] else []
+            row['tips'] = row['tips'].split('|') if row['tips'] else []
+            
+            routes.append(row)
+            
+    return routes
+
+# 执行读取操作，ROUTES_DATA 现在由外部表格驱动
+ROUTES_DATA = load_routes_from_csv()
 
 # ==========================================
-# 2. HTML 模板 (TailwindCSS 驱动工具化 UI)
+# 2. HTML 模板 (TailwindCSS 架构)
 # ==========================================
 
 BASE_HTML_START = """<!DOCTYPE html>
@@ -52,36 +40,27 @@ BASE_HTML_START = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title} | PetEntryGuide</title>
+    <title>{title}</title>
     <meta name="description" content="{description}">
-    <link rel="canonical" href="https://petentryguide.com/{canonical_url}">
+    <link rel="canonical" href="https://petentryguide.com/{slug}">
     <script src="https://cdn.tailwindcss.com"></script>
-    {schema_json}
     <style>
-        body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }}
-        /* 自定义 details 折叠面板过渡动画 */
-        details > summary {{ list-style: none; }}
-        details > summary::-webkit-details-marker {{ display: none; }}
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
-    <nav class="bg-white border-b border-gray-200 py-4 px-6 sticky top-0 z-50 shadow-sm">
+    <nav class="bg-white border-b border-gray-200 py-4 px-6 sticky top-0 z-50">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <a href="/" class="text-xl font-extrabold text-blue-700 tracking-tight">PetEntryGuide</a>
-            <div class="text-sm font-medium text-gray-500">2026 Database</div>
+            <a href="/" class="text-xl font-bold text-blue-600">PetEntryGuide</a>
+            <div class="text-sm text-gray-500">2026 Import Requirements</div>
         </div>
     </nav>
 """
 
 BASE_HTML_END = """
-    <footer class="bg-white border-t border-gray-200 mt-16 py-12 text-center">
-        <div class="max-w-3xl mx-auto px-6">
-            <p class="text-sm text-gray-500 mb-4 font-medium">
-                ⚠️ 当前规则基于 2026 年已知海关条例，政策存在随时调整概率，请在预订机票前通过官方渠道复核。
-            </p>
-            <p class="text-xs text-gray-400">
-                &copy; 2026 PetEntryGuide. A Growth-Oriented Knowledge Base.
-            </p>
+    <footer class="bg-white border-t border-gray-200 mt-20 py-10 text-center text-sm text-gray-500">
+        <div class="max-w-5xl mx-auto">
+            &copy; 2026 PetEntryGuide. All information is for guidance purposes. Check official sources.
         </div>
     </footer>
 </body>
@@ -89,187 +68,129 @@ BASE_HTML_END = """
 """
 
 # ==========================================
-# 3. 页面与数据生成逻辑
+# 3. 页面生成逻辑
 # ==========================================
 
-def generate_schema(route):
-    """动态生成 SEO 降维打击的 HowTo Schema"""
-    steps = [{"@type": "HowToStep", "text": step.split(': ')[-1] if ': ' in step else step} for step in route['process_steps']]
-    schema = {
-        "@context": "https://schema.org",
-        "@type": "HowTo",
-        "name": route['title'],
-        "step": steps
-    }
-    return f'<script type="application/ld+json">\n{json.dumps(schema, indent=2)}\n</script>'
-
 def generate_guide_page(route):
-    """生成仪表盘化详情页"""
+    """生成详情页"""
     
-    # 构造分层目录 (Destination-First)
-    dest_dir = route['to_country'].lower()
-    origin_dir = f"from-{route['from_country'].lower()}"
-    pet_dir = route['pet_type'].lower()
-    canonical_url = f"{dest_dir}/{origin_dir}/{pet_dir}/"
-    
-    # 动态 Schema
-    schema_script = generate_schema(route)
-    
-    # 风险标签逻辑
-    risk_color = "bg-red-100 text-red-700 border-red-200" if "High" in route['risk_level'] else "bg-green-100 text-green-700 border-green-200"
-    
-    # 交互式 Checklist (原生 HTML Checkbox + Tailwind 划线效果)
+    # 渲染步骤
     steps_html = ""
-    for step in route['process_steps']:
-        time_label, task = step.split(': ') if ': ' in step else ("Action", step)
-        steps_html += f"""
-        <div class="relative pl-8 mb-6">
-            <div class="absolute left-0 top-1.5 w-3 h-3 bg-blue-500 rounded-full border-2 border-white ring-4 ring-blue-50"></div>
-            <div class="text-sm font-bold text-blue-600 mb-1 uppercase tracking-wide">{time_label}</div>
-            <label class="flex items-start space-x-3 cursor-pointer group">
-                <input type="checkbox" class="peer mt-1 w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                <span class="text-gray-800 text-lg peer-checked:line-through peer-checked:text-gray-400 transition-all">{task}</span>
-            </label>
-        </div>
-        """
+    for idx, step in enumerate(route['process_steps']):
+        steps_html += f'<li class="mb-4 flex"><span class="font-bold text-blue-600 mr-3">Step {idx+1}</span> <span>{step}</span></li>'
     
-    # 折叠面板处理长文本 (Accordion)
-    docs_html = "".join([f'<li class="mb-2 flex items-center"><svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>{doc}</li>' for doc in route['required_documents']])
-    tips_html = "".join([f'<p class="mb-2">{tip}</p>' for tip in route['tips']])
+    # 渲染文档
+    docs_html = "".join([f'<li class="list-disc ml-5 mb-2">{doc}</li>' for doc in route['required_documents']])
+    
+    # 渲染提示
+    tips_html = "".join([f'<p class="text-yellow-800 font-medium">{tip}</p>' for tip in route['tips']])
     
     content = f"""
-    <div class="max-w-3xl mx-auto px-6 py-8">
-        <div class="mb-8">
-            <div class="flex items-center space-x-2 text-sm text-gray-500 font-medium mb-4">
-                <span>{route['from_country']}</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                <span>{route['to_country']} ({route['pet_type'].capitalize()})</span>
+    <div class="max-w-4xl mx-auto px-6 py-10">
+        <div class="text-sm text-gray-500 mb-6">
+            <a href="/" class="hover:text-blue-600">Home</a> > {route['from_country']} > {route['to_country']} > {route['pet_type'].capitalize()}
+        </div>
+
+        <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 mb-4">{route['title']}</h1>
+        <p class="text-lg text-gray-600 mb-10">{route['summary']}</p>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                <div class="text-xs text-gray-500 uppercase font-semibold mb-1">Minimum Age</div>
+                <div class="font-bold text-gray-900">{route['min_age']}</div>
             </div>
-            
-            <div class="flex flex-wrap gap-3 mb-6">
-                <span class="px-3 py-1 rounded-md border text-sm font-bold {risk_color}">{route['risk_level']}</span>
-                <span class="px-3 py-1 rounded-md border bg-gray-100 text-gray-700 text-sm font-bold">{route['prep_time']} Prep</span>
-                <span class="px-3 py-1 rounded-md border bg-gray-100 text-gray-700 text-sm font-bold">Quarantine: {route['quarantine']}</span>
+            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                <div class="text-xs text-gray-500 uppercase font-semibold mb-1">Microchip</div>
+                <div class="font-bold text-gray-900">{route['microchip']}</div>
             </div>
-            
-            <h1 class="text-3xl font-extrabold text-gray-900 leading-tight mb-4">{route['title']}</h1>
-            
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                <p class="text-blue-800 font-medium">由于始发地属于 {route['risk_level']} 区域，需预留至少 {route['prep_time']} 的准备周期。核心在于确保 {route['rabies_vaccine']} 与符合要求的芯片。</p>
+            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                <div class="text-xs text-gray-500 uppercase font-semibold mb-1">Rabies</div>
+                <div class="font-bold text-gray-900">{route['rabies_vaccine']}</div>
+            </div>
+            <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                <div class="text-xs text-gray-500 uppercase font-semibold mb-1">Quarantine</div>
+                <div class="font-bold text-gray-900">{route['quarantine']}</div>
             </div>
         </div>
 
-        <div class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm mb-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6 border-b pb-4">Timeline Checklist</h2>
-            <div class="relative border-l-2 border-gray-100 ml-3 mt-4 space-y-2">
-                {steps_html}
-            </div>
-        </div>
+        <div class="grid md:grid-cols-3 gap-10">
+            <div class="md:col-span-2">
+                <h2 class="text-2xl font-bold border-b pb-2 mb-6">Step-by-Step Process</h2>
+                <ul class="mb-10 text-gray-700">{steps_html}</ul>
 
-        <div class="space-y-4">
-            <details class="group bg-white border border-gray-200 rounded-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
-                <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 bg-gray-50 hover:bg-gray-100 transition">
-                    Required Documents Details
-                    <span class="transition group-open:rotate-180">
-                        <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
-                    </span>
-                </summary>
-                <div class="p-5 border-t border-gray-200 text-gray-700">
-                    <ul class="text-sm space-y-1">{docs_html}</ul>
-                </div>
-            </details>
-            
-            <details class="group bg-white border border-gray-200 rounded-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
-                <summary class="flex justify-between items-center font-bold cursor-pointer list-none p-5 text-gray-900 bg-gray-50 hover:bg-gray-100 transition">
-                    Expert Policy Tips & Warnings
-                    <span class="transition group-open:rotate-180">
-                        <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
-                    </span>
-                </summary>
-                <div class="p-5 border-t border-gray-200 text-sm text-gray-700 bg-yellow-50">
+                <h2 class="text-2xl font-bold border-b pb-2 mb-6">Required Documents</h2>
+                <ul class="mb-10 text-gray-700">{docs_html}</ul>
+            </div>
+
+            <div>
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-5 rounded-r-lg mb-8">
+                    <h3 class="font-bold text-yellow-800 mb-2">Expert Tips</h3>
                     {tips_html}
                 </div>
-            </details>
+            </div>
         </div>
     </div>
     """
     
-    html = BASE_HTML_START.format(title=route['title'], description=route['summary'], canonical_url=canonical_url, schema_json=schema_script) + content + BASE_HTML_END
+    html = BASE_HTML_START.format(title=route['title'], description=route['summary'], slug=route['slug']) + content + BASE_HTML_END
     
-    # 写入文件结构 (Destination-First 层级目录)
-    target_path = os.path.join("public", dest_dir, origin_dir, pet_dir)
-    os.makedirs(target_path, exist_ok=True)
-    
-    file_path = os.path.join(target_path, "index.html")
-    with open(file_path, "w", encoding="utf-8") as f:
+    with open(f"public/{route['slug']}.html", "w", encoding="utf-8") as f:
         f.write(html)
 
 def generate_home_page():
-    """生成带有高信噪比卡片的首页"""
+    """生成带有三槽位搜索的首页"""
     cards_html = ""
     for route in ROUTES_DATA:
-        dest_dir = route['to_country'].lower()
-        origin_dir = f"from-{route['from_country'].lower()}"
-        pet_dir = route['pet_type'].lower()
-        route_url = f"/{dest_dir}/{origin_dir}/{pet_dir}/"
-        
-        risk_color = "bg-red-50 text-red-700 border-red-200" if "High" in route['risk_level'] else "bg-green-50 text-green-700 border-green-200"
-        
-        # 视觉降噪：删除废话，纯展示硬核数据
         cards_html += f"""
-        <a href="{route_url}" class="block bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-blue-400 transition duration-200">
-            <h3 class="text-xl font-extrabold text-gray-900 mb-4">{route['from_country']} ➔ {route['to_country']} ({route['pet_type'].capitalize()})</h3>
-            <div class="flex flex-col space-y-2">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border {risk_color} w-max">{route['risk_level']}</span>
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200 w-max">{route['prep_time']} Prep</span>
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200 w-max">Permit: {route['rabies_vaccine'].split(' ')[0]}</span>
-            </div>
+        <a href="/{route['slug']}.html" class="block bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md hover:border-blue-500 transition">
+            <div class="text-sm font-semibold text-blue-600 mb-2 uppercase tracking-wide">{route['pet_type']} GUIDE</div>
+            <h3 class="text-xl font-bold mb-2">{route['from_country']} → {route['to_country']}</h3>
+            <p class="text-gray-600 text-sm">{route['summary']}</p>
         </a>
         """
 
     content = f"""
     <div class="bg-white border-b border-gray-200">
         <div class="max-w-4xl mx-auto px-6 py-20 text-center">
-            <h1 class="text-5xl font-extrabold tracking-tight text-gray-900 mb-6">Route Finder</h1>
-            <p class="text-xl text-gray-500 mb-10">Select origin and destination to generate your 2026 checklist.</p>
+            <h1 class="text-5xl font-extrabold tracking-tight text-gray-900 mb-6">Find Pet Import Requirements Worldwide</h1>
+            <p class="text-xl text-gray-500 mb-10">Search official import rules for traveling internationally with pets.</p>
             
-            <div class="bg-white p-3 rounded-2xl border border-gray-300 shadow-xl flex flex-col md:flex-row gap-3 items-center max-w-3xl mx-auto">
-                <select class="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-lg font-medium rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500">
+            <div class="bg-white p-4 rounded-full border border-gray-300 shadow-lg flex flex-col md:flex-row gap-4 items-center max-w-3xl mx-auto">
+                <select class="flex-1 bg-transparent text-lg font-medium outline-none cursor-pointer px-4">
                     <option>From: China</option>
+                    <option>From: Japan</option>
                 </select>
-                <select class="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-lg font-medium rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500">
+                <div class="hidden md:block w-px h-8 bg-gray-300"></div>
+                <select class="flex-1 bg-transparent text-lg font-medium outline-none cursor-pointer px-4">
                     <option>To: USA</option>
                 </select>
-                <select class="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-lg font-medium rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Pet: Dog</option>
+                <div class="hidden md:block w-px h-8 bg-gray-300"></div>
+                <select class="flex-1 bg-transparent text-lg font-medium outline-none cursor-pointer px-4">
                     <option>Pet: Cat</option>
+                    <option>Pet: Dog</option>
                 </select>
-                <button class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition shadow-md">Get Guide</button>
+                <button class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition">Search</button>
             </div>
         </div>
     </div>
 
     <div class="max-w-5xl mx-auto px-6 py-16">
         <h2 class="text-2xl font-bold text-gray-900 mb-8">Popular Routes</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {cards_html}
         </div>
     </div>
     """
-    html = BASE_HTML_START.format(title="PetEntryGuide | Global Database", description="Structured pet import rules.", canonical_url="", schema_json="") + content + BASE_HTML_END
+    html = BASE_HTML_START.format(title="PetEntryGuide | Global Pet Relocation Database", description="Find official pet import requirements.", slug="") + content + BASE_HTML_END
     
     with open("public/index.html", "w", encoding="utf-8") as f:
         f.write(html)
 
 def generate_sitemap():
-    """生成匹配层级目录的 sitemap.xml"""
+    """生成 sitemap.xml"""
     urls = "<url><loc>https://petentryguide.com/</loc><priority>1.0</priority></url>\n"
     for route in ROUTES_DATA:
-        dest_dir = route['to_country'].lower()
-        origin_dir = f"from-{route['from_country'].lower()}"
-        pet_dir = route['pet_type'].lower()
-        loc = f"https://petentryguide.com/{dest_dir}/{origin_dir}/{pet_dir}/"
-        urls += f"<url><loc>{loc}</loc><priority>0.8</priority></url>\n"
+        urls += f"<url><loc>https://petentryguide.com/{route['slug']}.html</loc><priority>0.8</priority></url>\n"
     
     sitemap = f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>'
     
@@ -283,9 +204,16 @@ if __name__ == "__main__":
     if not os.path.exists("public"):
         os.makedirs("public")
     
-    generate_home_page()
-    for route in ROUTES_DATA:
-        generate_guide_page(route)
-        
-    generate_sitemap()
-    print("Growth-optimized build complete. Nested directories created in /public.")
+    print("Initializing Static Build Process...")
+    
+    # 增加数据校验逻辑，防止空表格报错
+    if not ROUTES_DATA:
+        print("构建中止：没有从 routes.csv 读取到有效数据，请检查文件。")
+    else:
+        generate_home_page()
+        for route in ROUTES_DATA:
+            generate_guide_page(route)
+            print(f"Generated: /{route['slug']}")
+            
+        generate_sitemap()
+        print("Build Complete. Outputs located in /public directory.")
