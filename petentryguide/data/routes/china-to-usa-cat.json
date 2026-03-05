@@ -1,0 +1,39 @@
+{
+  "from_country": "China",
+  "to_country": "USA",
+  "pet_type": "cat",
+  "slug": "china-to-usa-cat",
+  "title": "Bring a Cat from China to the USA (2026 Guide)",
+  "summary": "Requirements for importing a cat from China to the United States.",
+  "min_age": "6 months",
+  "microchip": "ISO 11784/85 required",
+  "rabies_vaccine": "Required",
+  "quarantine": "No",
+  "process_steps": [
+    "Microchip the cat with ISO 11784/85 compliant chip",
+    "Administer rabies vaccination (after microchipping)",
+    "Obtain Export Health Certificate from accredited vet",
+    "Complete CDC import form online",
+    "Book airline that accepts pets in cabin or cargo",
+    "Arrive at port of entry with all documents ready"
+  ],
+  "required_documents": [
+    "Export Health Certificate (endorsed by GACC)",
+    "Rabies Vaccination Certificate",
+    "CDC Import Form (dogs only, but recommended)",
+    "Microchip Certificate"
+  ],
+  "vaccines": [
+    "Rabies Vaccine"
+  ],
+  "travel_methods": [
+    "Cabin travel (under 20 lbs)",
+    "Cargo transport",
+    "Pet courier service"
+  ],
+  "tips": [
+    "Health certificates must be endorsed by government veterinarians.",
+    "Book flights at least 2 months in advance during peak seasons.",
+    "Check airline-specific pet policies before purchasing tickets."
+  ]
+}

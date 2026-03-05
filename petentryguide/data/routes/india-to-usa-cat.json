@@ -1,0 +1,38 @@
+{
+  "from_country": "India",
+  "to_country": "USA",
+  "pet_type": "cat",
+  "slug": "india-to-usa-cat",
+  "title": "Bring a Cat from India to the USA (2026 Guide)",
+  "summary": "Requirements for importing a cat from India to the United States.",
+  "min_age": "No minimum for cats",
+  "microchip": "ISO 11784/85 required",
+  "rabies_vaccine": "Required",
+  "quarantine": "No",
+  "process_steps": [
+    "Microchip the cat",
+    "Administer rabies vaccination",
+    "Obtain health certificate from Indian licensed vet",
+    "Have certificate endorsed by DAHD (India)",
+    "Export permit from DAHD",
+    "Arrive at US port with all documents"
+  ],
+  "required_documents": [
+    "DAHD-endorsed Health Certificate",
+    "Export Permit (DAHD)",
+    "Rabies Vaccination Certificate",
+    "Microchip Record"
+  ],
+  "vaccines": [
+    "Rabies Vaccine",
+    "Feline Panleukopenia (recommended)"
+  ],
+  "travel_methods": [
+    "Cargo transport",
+    "Pet courier service"
+  ],
+  "tips": [
+    "India has endemic rabies; ensure complete vaccination records are available.",
+    "Allow extra time for DAHD endorsement (can take 1-2 weeks)."
+  ]
+}

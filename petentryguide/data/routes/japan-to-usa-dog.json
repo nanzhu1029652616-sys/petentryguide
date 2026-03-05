@@ -1,0 +1,36 @@
+{
+  "from_country": "Japan",
+  "to_country": "USA",
+  "pet_type": "dog",
+  "slug": "japan-to-usa-dog",
+  "title": "Bring a Dog from Japan to the USA (2026 Guide)",
+  "summary": "CDC and USDA requirements for importing a dog from Japan to the United States.",
+  "min_age": "6 months",
+  "microchip": "ISO 11784/85 required",
+  "rabies_vaccine": "Required",
+  "quarantine": "No (if fully vaccinated)",
+  "process_steps": [
+    "Microchip the dog with ISO chip",
+    "Administer rabies vaccination after microchipping",
+    "Complete CDC Dog Import Form before travel",
+    "Obtain health certificate endorsed by MAFF",
+    "Present CDC Import Code at US entry"
+  ],
+  "required_documents": [
+    "CDC Dog Import Form",
+    "MAFF-endorsed Health Certificate",
+    "Rabies Vaccination Certificate",
+    "Microchip Certificate"
+  ],
+  "vaccines": [
+    "Rabies Vaccine"
+  ],
+  "travel_methods": [
+    "Cabin travel (small breeds)",
+    "Cargo transport"
+  ],
+  "tips": [
+    "Japan is a rabies-free country, which simplifies US import.",
+    "Submit CDC form online to receive your import code by email."
+  ]
+}

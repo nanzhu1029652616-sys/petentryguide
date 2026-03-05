@@ -1,0 +1,35 @@
+{
+  "from_country": "France",
+  "to_country": "USA",
+  "pet_type": "cat",
+  "slug": "france-to-usa-cat",
+  "title": "Bring a Cat from France to the USA (2026 Guide)",
+  "summary": "Requirements for importing a cat from France to the United States.",
+  "min_age": "No minimum for cats",
+  "microchip": "ISO 11784/85 required",
+  "rabies_vaccine": "Required",
+  "quarantine": "No",
+  "process_steps": [
+    "Ensure cat has ISO-compliant microchip",
+    "Administer rabies vaccination",
+    "Get health certificate from French vet",
+    "Have certificate endorsed by DGAL (France)",
+    "Travel with complete documentation"
+  ],
+  "required_documents": [
+    "DGAL-endorsed Health Certificate",
+    "Rabies Vaccination Certificate",
+    "Microchip Record"
+  ],
+  "vaccines": [
+    "Rabies Vaccine"
+  ],
+  "travel_methods": [
+    "Cabin travel",
+    "Cargo transport"
+  ],
+  "tips": [
+    "France to USA is straightforward; ensure DGAL endorsement is recent.",
+    "Some airlines do not allow pets in cabin on transatlantic flights."
+  ]
+}

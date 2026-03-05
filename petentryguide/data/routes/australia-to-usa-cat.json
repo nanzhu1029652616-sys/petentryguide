@@ -1,0 +1,35 @@
+{
+  "from_country": "Australia",
+  "to_country": "USA",
+  "pet_type": "cat",
+  "slug": "australia-to-usa-cat",
+  "title": "Bring a Cat from Australia to the USA (2026 Guide)",
+  "summary": "Requirements for importing a cat from Australia to the United States.",
+  "min_age": "No minimum for cats",
+  "microchip": "ISO 11784/85 required",
+  "rabies_vaccine": "Recommended",
+  "quarantine": "No",
+  "process_steps": [
+    "Microchip the cat with ISO chip",
+    "Obtain rabies vaccination",
+    "Get health certificate from AQIS-accredited vet",
+    "Book direct or connecting flight to USA",
+    "Declare pet at US customs"
+  ],
+  "required_documents": [
+    "Australian Government Health Certificate",
+    "Rabies Vaccination Certificate",
+    "Microchip Record"
+  ],
+  "vaccines": [
+    "Rabies Vaccine"
+  ],
+  "travel_methods": [
+    "Cargo transport (long haul)",
+    "Pet relocation service"
+  ],
+  "tips": [
+    "Australia is rabies-free; US entry is relatively smooth.",
+    "Long flight times mean cargo is often more comfortable for cats."
+  ]
+}

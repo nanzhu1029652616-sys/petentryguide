@@ -1,0 +1,36 @@
+{
+  "from_country": "France",
+  "to_country": "USA",
+  "pet_type": "dog",
+  "slug": "france-to-usa-dog",
+  "title": "Bring a Dog from France to the USA (2026 Guide)",
+  "summary": "CDC and USDA requirements for importing a dog from France to the United States.",
+  "min_age": "6 months",
+  "microchip": "ISO 11784/85 required",
+  "rabies_vaccine": "Required",
+  "quarantine": "No (if vaccinated)",
+  "process_steps": [
+    "Microchip the dog",
+    "Vaccinate against rabies",
+    "Complete CDC Dog Import Form online",
+    "Get DGAL-endorsed health certificate",
+    "Present CDC Import Code at entry"
+  ],
+  "required_documents": [
+    "CDC Dog Import Form",
+    "DGAL-endorsed Health Certificate",
+    "Rabies Vaccination Certificate",
+    "Microchip Documentation"
+  ],
+  "vaccines": [
+    "Rabies Vaccine"
+  ],
+  "travel_methods": [
+    "Cargo transport",
+    "Pet courier"
+  ],
+  "tips": [
+    "France is low-risk for rabies; process is similar to other EU countries.",
+    "Cargo is the most common option for dogs on transatlantic flights."
+  ]
+}

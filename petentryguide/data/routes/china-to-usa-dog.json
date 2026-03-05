@@ -1,0 +1,41 @@
+{
+  "from_country": "China",
+  "to_country": "USA",
+  "pet_type": "dog",
+  "slug": "china-to-usa-dog",
+  "title": "Bring a Dog from China to the USA (2026 Guide)",
+  "summary": "CDC and USDA requirements for importing a dog from China to the United States.",
+  "min_age": "6 months",
+  "microchip": "ISO 11784/85 required",
+  "rabies_vaccine": "Required (CDC-approved facility)",
+  "quarantine": "Possible (if not vaccinated at CDC-approved facility)",
+  "process_steps": [
+    "Microchip the dog with ISO 11784/85 chip",
+    "Vaccinate at a CDC-approved facility in China",
+    "Obtain USDA-endorsed health certificate",
+    "Complete CDC Dog Import Form online",
+    "Receive CDC Import Code via email",
+    "Present all documents at US port of entry"
+  ],
+  "required_documents": [
+    "CDC Dog Import Form (mandatory)",
+    "Proof of CDC-approved rabies vaccination",
+    "Export Health Certificate (GACC endorsed)",
+    "Microchip documentation",
+    "Airline health certificate"
+  ],
+  "vaccines": [
+    "Rabies Vaccine (CDC-approved facility required)",
+    "DHPP recommended"
+  ],
+  "travel_methods": [
+    "Cargo transport (most common)",
+    "Cabin travel (small breeds)",
+    "Pet relocation service"
+  ],
+  "tips": [
+    "China requires vaccination at CDC-approved facilities; verify the list at cdc.gov.",
+    "The CDC Dog Import Form must be submitted before travel.",
+    "Allow 4\u20136 months for the full vaccination and documentation process."
+  ]
+}

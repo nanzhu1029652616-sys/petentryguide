@@ -1,0 +1,35 @@
+{
+  "from_country": "Germany",
+  "to_country": "USA",
+  "pet_type": "cat",
+  "slug": "germany-to-usa-cat",
+  "title": "Bring a Cat from Germany to the USA (2026 Guide)",
+  "summary": "Requirements for importing a cat from Germany to the United States.",
+  "min_age": "No minimum for cats",
+  "microchip": "ISO 11784/85 required",
+  "rabies_vaccine": "Required",
+  "quarantine": "No",
+  "process_steps": [
+    "Microchip the cat (EU standard, ISO compatible)",
+    "Administer rabies vaccination",
+    "Obtain EU-format health certificate",
+    "Have certificate endorsed by German veterinary authority",
+    "Travel with all documentation"
+  ],
+  "required_documents": [
+    "EU Animal Health Certificate",
+    "Rabies Vaccination Certificate",
+    "Microchip Record"
+  ],
+  "vaccines": [
+    "Rabies Vaccine"
+  ],
+  "travel_methods": [
+    "Cabin travel",
+    "Cargo transport"
+  ],
+  "tips": [
+    "EU pet passports are not accepted in the USA; a separate health certificate is required.",
+    "Book airport-to-airport pet transport through your airline."
+  ]
+}

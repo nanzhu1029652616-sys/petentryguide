@@ -1,0 +1,36 @@
+{
+  "from_country": "Brazil",
+  "to_country": "USA",
+  "pet_type": "dog",
+  "slug": "brazil-to-usa-dog",
+  "title": "Bring a Dog from Brazil to the USA (2026 Guide)",
+  "summary": "CDC and USDA requirements for importing a dog from Brazil to the United States.",
+  "min_age": "6 months",
+  "microchip": "ISO 11784/85 required",
+  "rabies_vaccine": "Required",
+  "quarantine": "No (if vaccinated)",
+  "process_steps": [
+    "Microchip the dog",
+    "Administer rabies vaccination",
+    "Complete CDC Dog Import Form online",
+    "Get MAPA-endorsed health certificate",
+    "Present all documents at US entry"
+  ],
+  "required_documents": [
+    "CDC Dog Import Form",
+    "MAPA-endorsed Health Certificate",
+    "Rabies Vaccination Certificate",
+    "Microchip Documentation"
+  ],
+  "vaccines": [
+    "Rabies Vaccine"
+  ],
+  "travel_methods": [
+    "Cargo transport",
+    "Pet relocation service"
+  ],
+  "tips": [
+    "Brazil has controlled rabies; standard CDC process applies.",
+    "MAPA endorsement can take up to 2 weeks during busy periods."
+  ]
+}
