@@ -1,0 +1,35 @@
+{
+  "from_country": "Australia",
+  "to_country": "USA",
+  "pet_type": "dog",
+  "slug": "australia-to-usa-dog",
+  "title": "Bring a Dog from Australia to the USA (2026 Guide)",
+  "summary": "Requirements for importing a dog from Australia to USA.",
+  "min_age": "6 months",
+  "microchip": "ISO 11784/85 required",
+  "rabies_vaccine": "Required",
+  "quarantine": "No",
+  "process_steps": [
+    "Microchip the pet",
+    "Administer rabies vaccination",
+    "Obtain export health certificate",
+    "Complete required import form(s)",
+    "Travel with an approved airline"
+  ],
+  "required_documents": [
+    "Export Health Certificate",
+    "Rabies Vaccination Certificate",
+    "Import Form (if required)"
+  ],
+  "vaccines": [
+    "Rabies Vaccine"
+  ],
+  "travel_methods": [
+    "Cabin travel",
+    "Cargo transport"
+  ],
+  "tips": [
+    "Health certificates may need endorsement by official government veterinarians.",
+    "Check airline seasonal cargo embargo rules before booking."
+  ]
+}
