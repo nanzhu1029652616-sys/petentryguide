@@ -233,6 +233,16 @@ def generate_sitemap(routes):
 # 4. 执行控制
 # ==========================================
 if __name__ == "__main__":
+    import glob # 引入 glob 库找文件
+
+    print("开始清理根目录的历史遗留 HTML 文件...")
+    # 自动找出根目录下所有的 .html 文件并删除
+    for old_file in glob.glob("*.html"):
+        os.remove(old_file)
+        
+    print("清理完成！开始构建全新的层级目录...")
+    
+    # 下面是你原本的代码
     if not os.path.exists("public"):
         os.makedirs("public")
         
