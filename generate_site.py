@@ -230,33 +230,48 @@ def generate_sitemap(routes):
         f.write(sitemap)
 
 # ==========================================
-# 4. 执行控制与自动化清理
+# 4. 执行控制与终极大扫除 (Nuclear Cleanup)
 # ==========================================
 if __name__ == "__main__":
     import glob
+    import shutil # 引入高级文件操作库用来删文件夹
+
+    print("开始执行终极全盘清理...")
     
-    # 1. 自动清理根目录下的历史遗留 HTML 文件
-    print("开始清理根目录的旧版本 HTML 文件...")
+    # 1. 清理根目录的旧 HTML 和 sitemap
     for old_file in glob.glob("*.html"):
         os.remove(old_file)
-        print(f"已删除老旧文件: {old_file}")
+    if os.path.exists("sitemap.xml"):
+        os.remove("sitemap.xml")
 
-    # 2. 创建全新的 public 输出目录
+    # 2. 强力清理所有历史遗留和因脏数据生成的废弃文件夹
+    junk_folders = ['app', 'book', 'components', 'data', 'fly', 'lib', 'petentryguide', 'usa']
+    for folder in junk_folders:
+        if os.path.exists(folder) and os.path.isdir(folder):
+            shutil.rmtree(folder)
+            print(f"🧹 已彻底删除废弃目录: {folder}")
+
+    # 3. 重建全新的 public 输出目录
     if not os.path.exists("public"):
         os.makedirs("public")
         
     routes_data = load_routes_from_csv()
     
-    if not routes_data:
-        print("中止执行：未读取到有效数据。")
+    # 4. 脏数据拦截拦截逻辑 (防止再次生成 fly/from-fit 这种奇怪目录)
+    # 只保留真正的国家名称 (长度大于1，且不包含如何、适合等非国家词汇)
+    valid_routes = []
+    for r in routes_data:
+        to_c = r.get('to_country', '').strip().lower()
+        from_c = r.get('from_country', '').strip().lower()
+        if len(to_c) > 1 and len(from_c) > 1 and to_c not in ['book', 'fly'] and from_c not in ['how', 'fit']:
+            valid_routes.append(r)
+    
+    if not valid_routes:
+        print("中止执行：未读取到有效的路线数据，请检查 CSV 文件。")
     else:
-        # 3. 生成新版架构
-        generate_home_page(routes_data)
-        for route in routes_data:
+        # 5. 生成纯净版新架构
+        generate_home_page(valid_routes)
+        for route in valid_routes:
             generate_guide_page(route)
-        generate_sitemap(routes_data)
-        print("构建完毕。全新的分层静态站点已输出至 /public 目录。")
-        for route in routes_data:
-            generate_guide_page(route)
-        generate_sitemap(routes_data)
-        print("构建完毕。站点静态文件已输出至 /public 目录。")
+        generate_sitemap(valid_routes)
+        print("🚀 构建完毕！完美的层级站点已安全输出至 /public 目录。")
