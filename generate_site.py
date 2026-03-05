@@ -2,7 +2,7 @@ import csv
 import os
 from datetime import datetime
 
-# 1. 详情页模板 (PM 5.0 仪表盘风 + 交互式 Checklist)
+# 1. 详情页模板 (PM 5.0 仪表盘风)
 PAGE_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,36 +43,36 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
                 <div class="stat-tile"><span class="stat-label">Lead Time</span><span class="stat-value">[[LEAD_TIME]]</span></div>
                 <div class="stat-tile"><span class="stat-label">Quarantine</span><span class="stat-value">[[QUARANTINE]]</span></div>
                 <div class="stat-tile"><span class="stat-label">Pet Type</span><span class="stat-value">[[PET_TYPE]]</span></div>
-                <div class="stat-tile"><span class="stat-label">Source</span><span class="stat-value">CDC 2026</span></div>
+                <div class="stat-tile"><span class="stat-label">Risk List</span><span class="stat-value">CDC 2026</span></div>
             </div>
         </header>
         <section class="content-area">
             <div class="content-box">
-                <h2 style="margin:0 0 20px;">Relocation Checklist</h2>
+                <h2 style="margin:0 0 20px;">2026 Action Checklist</h2>
                 [[CHECKLIST_ITEMS]]
             </div>
             <div class="content-box">
-                <h2 style="margin-top:0;">Deep Guide</h2>
+                <h2 style="margin-top:0;">Detailed Guide</h2>
                 <div style="font-size:1.1em; line-height:1.8;">[[BODY]]</div>
             </div>
         </section>
         <aside class="sidebar-cta">
-            <h3 style="margin:0;">Expert Paperwork Support</h3>
-            <p style="font-size:0.9em; opacity:0.9; margin-top:10px;">CDC import forms can be tricky. Let our partners handle the 2026 requirements for you.</p>
-            <button class="cta-button" onclick="window.print()">Download Checklist PDF</button>
+            <h3 style="margin:0;">Relocation Support</h3>
+            <p style="font-size:0.9em; opacity:0.9; margin-top:10px;">Overwhelmed by CDC forms? Get an expert to review your paperwork before departure.</p>
+            <button class="cta-button" onclick="window.print()">Save Checklist as PDF</button>
         </aside>
     </div>
-    <footer class="footer">© 2026 Pet Entry Guide. Verified against latest CDC protocols.</footer>
+    <footer class="footer">© 2026 Pet Entry Guide. Not legal advice.</footer>
 </body>
 </html>
 """
 
-# 2. 首页模板 (带搜索与热门路径)
+# 2. 首页模板 (PM 风格：极简、分块、带搜索)
 INDEX_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pet Entry Guide | 2026 Global Pet Relocation Database</title>
+<title>Pet Entry Guide | 2026 Global Relocation Database</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
 <style>
     :root { --primary: #1a73e8; --bg: #f8f9fa; }
@@ -96,12 +96,12 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 <div class="hero">
     <h1>Pet Entry Guide</h1>
     <div class="search-ui">
-        <input type="text" id="search-input" placeholder="Origin country (e.g. China, UK)...">
+        <input type="text" id="search-input" placeholder="Search your route (e.g. Mexico, India)...">
         <div class="hot-routes">
-            <span style="color:#70757a; font-weight:600; padding-top:10px;">Popular:</span>
+            <span style="color:#70757a; font-weight:600; padding-top:10px;">Hot:</span>
             <a href="/china-to-usa-dog.html" class="route-tag">China → USA</a>
             <a href="/australia-to-usa-dog.html" class="route-tag">Australia → USA</a>
-            <a href="/south-korea-to-usa-dog.html" class="route-tag">Korea → USA</a>
+            <a href="/south-korea-to-usa-cat.html" class="route-tag">Korea → USA</a>
         </div>
     </div>
 </div>
@@ -130,7 +130,7 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 """
 
 def main():
-    # 扩展映射表，解决 "Others" 过多的问题
+    # 彻底补全映射表，确保所有截图中的国家都有位置
     country_map = {
         'china': {'name': 'China', 'code': 'cn'},
         'japan': {'name': 'Japan', 'code': 'jp'},
@@ -140,7 +140,14 @@ def main():
         'australia': {'name': 'Australia', 'code': 'au'},
         'canada': {'name': 'Canada', 'code': 'ca'},
         'uk': {'name': 'United Kingdom', 'code': 'gb'},
-        'usa': {'name': 'General/USA', 'code': 'us'}
+        'mexico': {'name': 'Mexico', 'code': 'mx'},
+        'brazil': {'name': 'Brazil', 'code': 'br'},
+        'india': {'name': 'India', 'code': 'in'},
+        'eu': {'name': 'Europe (EU)', 'code': 'eu'},
+        'vietnam': {'name': 'Vietnam', 'code': 'vn'},
+        'thailand': {'name': 'Thailand', 'code': 'th'},
+        'philippines': {'name': 'Philippines', 'code': 'ph'},
+        'usa': {'name': 'USA General', 'code': 'us'}
     }
 
     if not os.path.exists('topics.csv'): return
@@ -151,29 +158,33 @@ def main():
     grouped = {}
 
     for slug, title, content in rows:
-        # 逻辑：识别通用指南还是国家指南
-        first_part = slug.split('-')[0]
+        # 智能匹配逻辑：先检查是否是通用指南，再遍历映射表进行前缀匹配
+        c_name, c_code = 'Other Routes', 'un'
         
         if 'cost' in slug or 'general' in slug:
             c_name, c_code = 'General Guides', 'un'
         else:
-            info = country_map.get(first_part, {'name': 'Other Routes', 'code': 'un'})
-            c_name, c_code = info['name'], info['code']
+            # 改进：遍历 key，只要 slug 以该 key 开头，就匹配成功
+            for key in sorted(country_map.keys(), key=len, reverse=True):
+                if slug.startswith(key):
+                    c_name = country_map[key]['name']
+                    c_code = country_map[key]['code']
+                    break
 
         if c_name not in grouped: grouped[c_name] = {'code': c_code, 'items': []}
         
-        # 提取仪表盘参数
+        # 提取仪表盘参数 (PM 5.0)
         q_days = "0 Days" if "no quarantine" in content.lower() or "rabies-free" in content.lower() else "30-Day Min."
         lead_time = "6+ Months" if "rabies titer" in content.lower() else "30 Days"
         level = "High Difficulty" if q_days != "0 Days" else "Low Difficulty"
         c_class = "level-hard" if level != "Low Difficulty" else "level-easy"
         pet_type = "Dog 🐶" if "dog" in slug else "Cat 🐱"
 
-        # 生成交互式 Checklist
-        steps = ["ISO Microchip", "Rabies Vaccine", "Government Endorsement", "CDC Dog Import Form"]
+        # 生成 Checklist
+        steps = ["ISO Microchip", "Rabies Vaccine", "Export Health Cert.", "CDC Dog Import Form"]
         checklist_html = "".join([f'<label class="todo-item"><input type="checkbox"><span>{s}</span></label>' for s in steps])
 
-        # 写入详情页
+        # 写入详情页 HTML
         page_html = PAGE_TEMPLATE.replace('[[TITLE]]', title).replace('[[BODY]]', content).replace('[[TODAY]]', today)\
                      .replace('[[COUNTRY_NAME]]', c_name).replace('[[COUNTRY_ID]]', c_name.replace(' ', '-'))\
                      .replace('[[QUARANTINE]]', q_days).replace('[[LEAD_TIME]]', lead_time)\
@@ -181,11 +192,12 @@ def main():
                      .replace('[[PET_TYPE]]', pet_type).replace('[[CHECKLIST_ITEMS]]', checklist_html)
         
         with open(f"{slug}.html", 'w', encoding='utf-8') as f_out: f_out.write(page_html)
-        grouped[c_name]['items'].append({'slug': slug, 'title': title, 'content': content, 'pet_type': pet_type})
+        grouped[c_name]['items'].append({'slug': slug, 'title': title, 'pet_type': pet_type, 'content': content})
 
     # 构建首页
     sections = ""
     sorted_countries = sorted(grouped.keys())
+    # 强制 General Guides 置顶
     if 'General Guides' in sorted_countries:
         sorted_countries.remove('General Guides'); sorted_countries.insert(0, 'General Guides')
 
@@ -193,7 +205,7 @@ def main():
         code = grouped[country]['code']
         sections += f'<h2 class="section-title" id="{country.replace(" ", "-")}"><span class="fi fi-{code}"></span>&nbsp;{country}</h2><div class="grid">'
         for item in grouped[country]['items']:
-            snippet = item['content'].replace('<p>', '').replace('</p>', '')[:110] + "..."
+            snippet = item['content'].replace('<p>', '').replace('</p>', '').replace('<strong>', '').replace('</strong>', '')[:110] + "..."
             sections += f'''
             <a href="{item["slug"]}.html" class="card">
                 <div>
