@@ -230,19 +230,18 @@ def generate_sitemap(routes):
         f.write(sitemap)
 
 # ==========================================
-# 4. 执行控制
+# 4. 执行控制与自动化清理
 # ==========================================
 if __name__ == "__main__":
-    import glob # 引入 glob 库找文件
-
-    print("开始清理根目录的历史遗留 HTML 文件...")
-    # 自动找出根目录下所有的 .html 文件并删除
+    import glob
+    
+    # 1. 自动清理根目录下的历史遗留 HTML 文件
+    print("开始清理根目录的旧版本 HTML 文件...")
     for old_file in glob.glob("*.html"):
         os.remove(old_file)
-        
-    print("清理完成！开始构建全新的层级目录...")
-    
-    # 下面是你原本的代码
+        print(f"已删除老旧文件: {old_file}")
+
+    # 2. 创建全新的 public 输出目录
     if not os.path.exists("public"):
         os.makedirs("public")
         
@@ -251,7 +250,12 @@ if __name__ == "__main__":
     if not routes_data:
         print("中止执行：未读取到有效数据。")
     else:
+        # 3. 生成新版架构
         generate_home_page(routes_data)
+        for route in routes_data:
+            generate_guide_page(route)
+        generate_sitemap(routes_data)
+        print("构建完毕。全新的分层静态站点已输出至 /public 目录。")
         for route in routes_data:
             generate_guide_page(route)
         generate_sitemap(routes_data)
