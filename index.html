@@ -1,1043 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pet Entry Guide | 2026 Route Finder & Policy Database</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
-<style>
-    :root { --primary: #1a73e8; --easy: #1e8e3e; --strict: #d93025; --standard: #f29900; --bg: #f8f9fa; }
-    body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: #202124; }
-    
-    /* Route Finder 区域 */
-    .hero { background: white; padding: 80px 20px; text-align: center; border-bottom: 1px solid #dadce0; }
-    h1 { font-size: 3.5em; letter-spacing: -0.05em; margin-bottom: 15px; color: #1a0dab; }
-    .route-finder { max-width: 800px; margin: 30px auto; background: white; padding: 25px; border-radius: 50px; border: 1px solid #dfe1e5; display: flex; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); align-items: center; justify-content: center; }
-    select, input { border: none; font-size: 1.1em; outline: none; background: transparent; padding: 5px; cursor: pointer; }
-    .divider { width: 1px; height: 30px; background: #eee; }
-    .find-btn { background: var(--primary); color: white; padding: 12px 30px; border-radius: 30px; border: none; font-weight: 700; cursor: pointer; }
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Entry Guide | 2026 Global Route Selector</title>
+    <style>
+        :root { --primary: #1a73e8; --bg: #f8f9fa; --text: #202124; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: var(--text); }
+        
+        /* Hero Section & Trust Bar */
+        .hero { background: white; padding: 100px 20px 80px; text-align: center; border-bottom: 1px solid #dadce0; }
+        h1 { font-size: 3.8em; letter-spacing: -0.04em; color: #1a0dab; margin: 0 0 15px 0; }
+        .trust-bar { display: inline-block; background: #e6f4ea; color: #1e8e3e; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.9em; margin-bottom: 40px; }
+        
+        /* Route Selector (核心 3 槽位) */
+        .route-selector { max-width: 900px; margin: 0 auto; background: white; padding: 15px; border-radius: 60px; border: 1px solid #dfe1e5; display: flex; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.08); flex-wrap: wrap; }
+        .selector-group { flex: 1; display: flex; flex-direction: column; text-align: left; padding: 0 25px; border-right: 1px solid #eee; min-width: 150px; }
+        .selector-group:nth-child(3) { border-right: none; }
+        .selector-label { font-size: 0.75em; text-transform: uppercase; font-weight: 700; color: #70757a; margin-bottom: 5px; }
+        select { border: none; font-size: 1.1em; font-weight: 600; color: var(--text); outline: none; background: transparent; cursor: pointer; padding: 0; appearance: none; -webkit-appearance: none; }
+        
+        /* The CTA Button */
+        .cta-btn { background: var(--primary); color: white; padding: 20px 40px; border-radius: 40px; border: none; font-weight: 800; font-size: 1.1em; cursor: pointer; transition: 0.2s; white-space: nowrap; margin-left: 10px; }
+        .cta-btn:hover { background: #1557b0; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(26,115,232,0.3); }
 
-    .container { max-width: 1200px; margin: 50px auto; padding: 0 25px; }
-    .region-section { margin-bottom: 60px; }
-    .region-title { font-size: 1.8em; margin-bottom: 25px; display: flex; align-items: center; color: #5f6368; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-    
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 30px; }
-    
-    /* 重构后的决策卡片 */
-    .card { background: white; border: 1px solid #dadce0; border-radius: 20px; padding: 30px; text-decoration: none; color: inherit; transition: 0.3s; display: flex; flex-direction: column; }
-    .card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); border-color: var(--primary); }
-    .card-tags { display: flex; gap: 8px; margin-bottom: 15px; }
-    .tag { font-size: 0.75em; font-weight: 800; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
-    
-    h3 { margin: 0 0 12px; font-size: 1.4em; color: #1a73e8; }
-    .summary { font-size: 1em; color: #5f6368; line-height: 1.5; font-weight: 500; }
-    
-    .footer { text-align: center; padding: 80px; color: #70757a; border-top: 1px solid #eee; }
-</style>
+        /* Popular Routes Grid */
+        .container { max-width: 1200px; margin: 60px auto; padding: 0 20px; }
+        .section-title { font-size: 1.6em; margin-bottom: 30px; text-align: center; color: #5f6368; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+        .card { background: white; border: 1px solid #dadce0; border-radius: 16px; padding: 25px; text-decoration: none; color: inherit; transition: 0.3s; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); border-color: var(--primary); }
+        .card h3 { margin: 0 0 10px; color: var(--primary); font-size: 1.3em; }
+        .card-tags { display: flex; gap: 8px; margin-bottom: 15px; }
+        .card-tag { font-size: 0.75em; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: #f1f3f4; color: #5f6368; }
+
+        @media (max-width: 768px) {
+            .route-selector { flex-direction: column; border-radius: 24px; padding: 20px; gap: 15px; }
+            .selector-group { border-right: none; border-bottom: 1px solid #eee; padding: 10px 0; width: 100%; }
+            .cta-btn { width: 100%; margin: 10px 0 0 0; }
+        }
+    </style>
 </head>
 <body>
+
 <div class="hero">
-    <h1>Pet Entry Guide</h1>
-    <p style="font-size:1.4em; color:#5f6368;">2026 Professional Navigation for Global Pet Relocation.</p>
+    <h1>Global Pet Relocation</h1>
+    <div class="trust-bar">✓ Verified 2026 Customs Data • Synchronized for 50+ Countries</div>
     
-    <div class="route-finder">
-        <span>From:</span>
-        <input type="text" id="route-input" placeholder="Origin Country..." oninput="instantSearch(this.value)">
-        <div class="divider"></div>
-        <span>To:</span>
-        <select disabled><option>United States (CDC/USDA)</option></select>
-        <button class="find-btn">Find Protocol</button>
+    <div class="route-selector">
+        <div class="selector-group">
+            <span class="selector-label">Origin</span>
+            <select id="sel-origin">
+                <option value="china">China</option>
+                <option value="japan">Japan</option>
+                <option value="australia">Australia</option>
+                <option value="uk">United Kingdom</option>
+                <option value="south-korea">South Korea</option>
+                <option value="mexico">Mexico</option>
+            </select>
+        </div>
+        <div class="selector-group">
+            <span class="selector-label">Destination</span>
+            <select id="sel-dest">
+                <option value="usa">United States</option>
+            </select>
+        </div>
+        <div class="selector-group">
+            <span class="selector-label">Pet Type</span>
+            <select id="sel-pet">
+                <option value="dog">Dog</option>
+                <option value="cat">Cat</option>
+            </select>
+        </div>
+        <button class="cta-btn" onclick="getGuide()">Get My Guide</button>
     </div>
 </div>
 
-<div class="container" id="main-content">
-    <div class="region-section">
-        <h2 class="region-title">Policy & Cost Insights</h2>
-        <div class="grid">
-        <a href="pet-travel-cost-usa.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Cost to Bring a Pet to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
+<div class="container">
+    <h2 class="section-title">Popular Routes</h2>
+    <div class="grid">
         
-        <a href="cdc-dog-import-rules.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>CDC Dog Import Rules Explained</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="cdc-dog-import-permit.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Do You Need a CDC Dog Import Permit?</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-travel-cost-usa.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Cost to Bring a Pet to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        </div>
+            <a href="/usa/from-china/cat.html" class="card">
+                <div class="card-tags">
+                    <span class="card-tag">Standard Risk</span>
+                    <span class="card-tag">Required Quarantine</span>
+                </div>
+                <h3>China to USA (Cat)</h3>
+                <p style="margin:0; font-size:0.9em; color:#5f6368;">View the full 2026 checklist and requirements...</p>
+            </a>
+            
+            <a href="/usa/from-china/dog.html" class="card">
+                <div class="card-tags">
+                    <span class="card-tag">Standard Risk</span>
+                    <span class="card-tag">Required Quarantine</span>
+                </div>
+                <h3>China to USA (Dog)</h3>
+                <p style="margin:0; font-size:0.9em; color:#5f6368;">View the full 2026 checklist and requirements...</p>
+            </a>
+            
+            <a href="/usa/from-japan/cat.html" class="card">
+                <div class="card-tags">
+                    <span class="card-tag">Easy Risk</span>
+                    <span class="card-tag">Required Quarantine</span>
+                </div>
+                <h3>Japan to USA (Cat)</h3>
+                <p style="margin:0; font-size:0.9em; color:#5f6368;">View the full 2026 checklist and requirements...</p>
+            </a>
+            
+            <a href="/usa/from-japan/dog.html" class="card">
+                <div class="card-tags">
+                    <span class="card-tag">Easy Risk</span>
+                    <span class="card-tag">Required Quarantine</span>
+                </div>
+                <h3>Japan to USA (Dog)</h3>
+                <p style="margin:0; font-size:0.9em; color:#5f6368;">View the full 2026 checklist and requirements...</p>
+            </a>
+            
+            <a href="/usa/from-korea/cat.html" class="card">
+                <div class="card-tags">
+                    <span class="card-tag">Standard Risk</span>
+                    <span class="card-tag">Required Quarantine</span>
+                </div>
+                <h3>Korea to USA (Cat)</h3>
+                <p style="margin:0; font-size:0.9em; color:#5f6368;">View the full 2026 checklist and requirements...</p>
+            </a>
+            
+            <a href="/usa/from-korea/dog.html" class="card">
+                <div class="card-tags">
+                    <span class="card-tag">Standard Risk</span>
+                    <span class="card-tag">Required Quarantine</span>
+                </div>
+                <h3>Korea to USA (Dog)</h3>
+                <p style="margin:0; font-size:0.9em; color:#5f6368;">View the full 2026 checklist and requirements...</p>
+            </a>
+            
+            <a href="/usa/from-singapore/cat.html" class="card">
+                <div class="card-tags">
+                    <span class="card-tag">Standard Risk</span>
+                    <span class="card-tag">Required Quarantine</span>
+                </div>
+                <h3>Singapore to USA (Cat)</h3>
+                <p style="margin:0; font-size:0.9em; color:#5f6368;">View the full 2026 checklist and requirements...</p>
+            </a>
+            
+            <a href="/usa/from-singapore/dog.html" class="card">
+                <div class="card-tags">
+                    <span class="card-tag">Standard Risk</span>
+                    <span class="card-tag">Required Quarantine</span>
+                </div>
+                <h3>Singapore to USA (Dog)</h3>
+                <p style="margin:0; font-size:0.9em; color:#5f6368;">View the full 2026 checklist and requirements...</p>
+            </a>
+            
+            <a href="/usa/from-australia/dog.html" class="card">
+                <div class="card-tags">
+                    <span class="card-tag">Easy Risk</span>
+                    <span class="card-tag">Required Quarantine</span>
+                </div>
+                <h3>Australia to USA (Dog)</h3>
+                <p style="margin:0; font-size:0.9em; color:#5f6368;">View the full 2026 checklist and requirements...</p>
+            </a>
+            
+            <a href="/usa/from-canada/cat.html" class="card">
+                <div class="card-tags">
+                    <span class="card-tag">Standard Risk</span>
+                    <span class="card-tag">Required Quarantine</span>
+                </div>
+                <h3>Canada to USA (Cat)</h3>
+                <p style="margin:0; font-size:0.9em; color:#5f6368;">View the full 2026 checklist and requirements...</p>
+            </a>
+            
+            <a href="/usa/from-canada/dog.html" class="card">
+                <div class="card-tags">
+                    <span class="card-tag">Standard Risk</span>
+                    <span class="card-tag">Required Quarantine</span>
+                </div>
+                <h3>Canada to USA (Dog)</h3>
+                <p style="margin:0; font-size:0.9em; color:#5f6368;">View the full 2026 checklist and requirements...</p>
+            </a>
+            
     </div>
-    
-    
-            <div class="region-section">
-                <h2 class="region-title">Asia-Pacific</h2>
-                <div class="grid">
-        <a href="china-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">6-Month Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Cat from China to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="china-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from China to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="japan-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--easy); color:white;">Easy</span>
-                <span class="tag" style="background:#eee; color:#666;">6-Month Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">0 Days Quarantine</span>
-            </div>
-            <h3>Bring a Cat from Japan to the USA</h3>
-            <p class="summary">Streamlined entry with health certificate.</p>
-        </a>
-        
-        <a href="japan-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--standard); color:white;">Standard</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">0 Days Quarantine</span>
-            </div>
-            <h3>Bring a Dog from Japan to the USA</h3>
-            <p class="summary">Streamlined entry with health certificate.</p>
-        </a>
-        
-        <a href="korea-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Cat from South Korea to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="korea-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">6-Month Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from South Korea to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="singapore-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--easy); color:white;">Easy</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">0 Days Quarantine</span>
-            </div>
-            <h3>Bring a Cat from Singapore to the USA</h3>
-            <p class="summary">Streamlined entry with health certificate.</p>
-        </a>
-        
-        <a href="singapore-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--standard); color:white;">Standard</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">0 Days Quarantine</span>
-            </div>
-            <h3>Bring a Dog from Singapore to the USA</h3>
-            <p class="summary">Streamlined entry with health certificate.</p>
-        </a>
-        
-        <a href="india-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Cat from India to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="india-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from India to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="philippines-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Cat from the Philippines to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="philippines-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from the Philippines to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="thailand-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Cat from Thailand to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="thailand-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from Thailand to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="vietnam-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Cat from Vietnam to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="vietnam-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from Vietnam to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="taiwan-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Cat from Taiwan to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="taiwan-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from Taiwan to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="hongkong-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Cat from Hong Kong to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="hongkong-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from Hong Kong to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        </div>
-            </div>
-            
-            <div class="region-section">
-                <h2 class="region-title">Americas</h2>
-                <div class="grid">
-        <a href="canada-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Cat from Canada to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="canada-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">6-Month Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from Canada to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="mexico-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from Mexico to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="brazil-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from Brazil to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        </div>
-            </div>
-            
-            <div class="region-section">
-                <h2 class="region-title">Europe</h2>
-                <div class="grid">
-        <a href="uk-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--easy); color:white;">Easy</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">0 Days Quarantine</span>
-            </div>
-            <h3>Bring a Cat from the UK to the USA</h3>
-            <p class="summary">Streamlined entry with health certificate.</p>
-        </a>
-        
-        <a href="uk-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from the UK to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="eu-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Cat from the EU to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="eu-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from the EU to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        </div>
-            </div>
-            
-            <div class="region-section">
-                <h2 class="region-title">Oceania</h2>
-                <div class="grid">
-        <a href="australia-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--standard); color:white;">Standard</span>
-                <span class="tag" style="background:#eee; color:#666;">6-Month Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">0 Days Quarantine</span>
-            </div>
-            <h3>Bring a Dog from Australia to the USA</h3>
-            <p class="summary">Streamlined entry with health certificate.</p>
-        </a>
-        </div>
-            </div>
-            
-            <div class="region-section">
-                <h2 class="region-title">Additional Regions</h2>
-                <div class="grid">
-        <a href="malaysia-to-usa-cat.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Cat from Malaysia to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="malaysia-to-usa-dog.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Bring a Dog from Malaysia to the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="usa-pet-import.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>USA Pet Import Requirements</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="cat-import-usa.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Cat Import Requirements for the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="dog-import-usa.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Dog Import Requirements for the USA</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="dog-import-banned-countries.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Dog Import Restrictions and High-Risk Countries</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="rabies-vaccine-requirements.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Rabies Vaccine Requirements for Pet Travel</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="rabies-titer-test.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">6-Month Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Rabies Titer Test: When You Need It</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-microchip-requirements.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Pet Microchip Requirements</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-health-certificate.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Pet Health Certificate: What It Is and How to Get It</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="usda-accredited-vet.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>USDA-Accredited Vet: When It Matters</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="fit-to-fly-letter.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Fit-to-Fly Letter for Pets: Airline Requirements</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-travel-crate.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Airline Pet Crate Requirements</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="in-cabin-pet-rules.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>In-Cabin Pet Rules: Weight Limits and Booking Tips</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="checked-baggage-pet.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Checked Baggage Pet Travel: Pros, Cons, Rules</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="cargo-pet-travel.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Pet Travel as Cargo: What to Expect</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-travel-timeline.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Pet Travel Timeline: 30/60/90-Day Checklist</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-quarantine-usa.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Does the USA Quarantine Pets? What Actually Happens</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-customs-arrival.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>What Happens at US Customs When You Arrive with a Pet</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-vaccination-checklist.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Pet Vaccination Checklist for International Travel</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-deworming.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Do Pets Need Deworming for US Entry?</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-tapeworm-treatment.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Tapeworm Treatment Rules for International Pet Travel</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-passport-usa.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Do You Need a Pet Passport to Enter the USA?</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="moving-to-usa-with-pets.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Moving to the USA with Pets: Full Relocation Guide</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="traveling-with-pets-internationally.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>International Pet Travel Guide: The Basics</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="airline-pet-fees.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Airline Pet Fees: Typical Price Ranges and Hidden Costs</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="how-to-book-pet-flight.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>How to Book a Flight for Your Pet</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="best-airlines-for-pets.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Best Airlines for Traveling with Pets</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-carrier-in-cabin.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Best In-Cabin Pet Carrier Size Guide</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-escape-proof-harness.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Escape-Proof Harness Tips for Airport Travel</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="airport-security-with-pets.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Airport Security with Pets: TSA Process Explained</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-sedation-flight.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Should You Sedate a Pet for Flying? Risks and Alternatives</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-motion-sickness.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Pet Motion Sickness During Flights: Prevention Tips</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-hydration-flight.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Keeping Your Pet Hydrated on Long Flights</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-feeding-before-flight.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Feeding Schedule Before Flying with a Pet</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-anxiety-flight.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>How to Reduce Pet Anxiety When Flying</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-travel-documents-checklist.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Pet Travel Documents Checklist</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="lost-pet-airport.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>What to Do If a Pet Is Lost at the Airport</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-import-us-states.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--easy); color:white;">Easy</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">0 Days Quarantine</span>
-            </div>
-            <h3>Do US States Have Different Pet Entry Rules?</h3>
-            <p class="summary">Streamlined entry with health certificate.</p>
-        </a>
-        
-        <a href="pet-arrival-lax.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>LAX Pet Arrival Guide</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-arrival-sfo.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>SFO Pet Arrival Guide</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-arrival-jfk.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>JFK Pet Arrival Guide</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-arrival-sea.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>SEA Pet Arrival Guide</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-arrival-ord.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>ORD Pet Arrival Guide</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-arrival-dfw.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>DFW Pet Arrival Guide</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-arrival-mia.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>MIA Pet Arrival Guide</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-travel-insurance.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Pet Travel Insurance: What It Covers</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-travel-agency.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Should You Use a Pet Relocation Agency?</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-relocation-vs-diy.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>DIY vs Pet Relocation Service: Cost & Risk Comparison</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-import-mistakes.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Top Pet Import Mistakes That Cause Delays</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-import-denied-entry.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Why Pets Get Denied Entry and How to Avoid It</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-documents-translation.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Do Pet Documents Need Translation for US Entry?</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-microchip-scan.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>How to Verify Your Pet Microchip Scans Correctly</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-vaccine-records.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>How to Keep Vaccine Records Acceptable for Airlines</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-health-check-before-flight.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Pre-Flight Vet Check: What Vets Look For</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-travel-checklist-7-days.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>7 Days Before Flying with a Pet: Checklist</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-travel-checklist-24-hours.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>24 Hours Before Flying with a Pet: Checklist</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-travel-crate-training.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Crate Training for Flight: 7-Day Plan</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-flight-delay.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>If Your Flight Is Delayed: Pet Safety Plan</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-layover-guide.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>Pet Travel with Layovers: What to Plan</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        
-        <a href="pet-import-faq.html" class="card">
-            <div class="card-tags">
-                <span class="tag" style="background:var(--strict); color:white;">Strict</span>
-                <span class="tag" style="background:#eee; color:#666;">6-Month Lead</span>
-                <span class="tag" style="background:#eee; color:#666;">30-Day+ Quarantine</span>
-            </div>
-            <h3>USA Pet Import FAQ</h3>
-            <p class="summary">Requires CDC Permit & Official Microchip.</p>
-        </a>
-        </div>
-            </div>
-            
 </div>
 
 <script>
-    function instantSearch(term) {
-        const cards = document.querySelectorAll('.card');
-        const sections = document.querySelectorAll('.region-section');
-        const lowerTerm = term.toLowerCase();
+    // JS 路由跳转逻辑：完美匹配后端的文件夹层级结构
+    function getGuide() {
+        const origin = document.getElementById('sel-origin').value;
+        const dest = document.getElementById('sel-dest').value;
+        const pet = document.getElementById('sel-pet').value;
         
-        cards.forEach(card => {
-            const match = card.innerText.toLowerCase().includes(lowerTerm);
-            card.style.display = match ? 'flex' : 'none';
-        });
-        
-        sections.forEach(sec => {
-            const hasVisible = Array.from(sec.querySelectorAll('.card')).some(c => c.style.display !== 'none');
-            sec.style.display = hasVisible ? 'block' : 'none';
-        });
+        if(origin && dest && pet) {
+            // 跳转到生成好的层级 URL
+            window.location.href = '/' + dest + '/from-' + origin + '/' + pet + '.html';
+        }
     }
 </script>
 </body>

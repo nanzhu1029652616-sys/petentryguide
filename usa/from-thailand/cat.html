@@ -3,49 +3,52 @@
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bring a Cat from Thailand to the USA (2026) | 2026 Pet Travel Expert</title>
-    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "HowTo", "name": "Bring a Cat from Thailand to the USA (2026)", "step": [{"@type": "HowToStep", "text": "Ensure ISO Microchip compliance."}, {"@type": "HowToStep", "text": "Obtain Rabies vaccination certificate."}, {"@type": "HowToStep", "text": "Get government endorsement for documents."}]}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "HowTo", "name": "Bring a Cat from Thailand to the USA (2026)", "step": [{"@type": "HowToStep", "text": "Ensure ISO Microchip compliance."}, {"@type": "HowToStep", "text": "Obtain Rabies vaccination certificate."}, {"@type": "HowToStep", "text": "Submit Government Endorsed Forms."}]}</script>
     <style>
-        :root { --primary: #1a73e8; --easy: #1e8e3e; --standard: #f9ab00; --strict: #d93025; --bg: #f8f9fa; }
-        body { font-family: 'Inter', -apple-system, sans-serif; color: #202124; background: var(--bg); margin: 0; }
-        .nav-bar { background: white; border-bottom: 1px solid #dadce0; padding: 15px 20px; position: sticky; top: 0; z-index: 100; }
+        :root { --primary: #1a73e8; --text: #202124; --bg: #f8f9fa; }
+        body { font-family: 'Inter', -apple-system, sans-serif; color: var(--text); background: var(--bg); margin: 0; }
+        .nav-bar { background: white; border-bottom: 1px solid #dadce0; padding: 15px 20px; position: sticky; top: 0; z-index: 100; font-size: 0.9em; }
+        .nav-bar a { color: var(--primary); text-decoration: none; }
         .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 320px; gap: 30px; }
         
-        /* Dashboard Header */
         .dashboard-header { background: white; padding: 40px; border-radius: 24px; border: 1px solid #dadce0; grid-column: 1 / -1; }
-        .route-info { display: flex; align-items: center; gap: 15px; font-size: 0.9em; color: #5f6368; margin-bottom: 20px; }
-        .one-sentence-rule { background: #e8f0fe; color: #1967d2; padding: 15px 25px; border-radius: 12px; font-weight: 600; font-size: 1.1em; margin: 20px 0; }
+        .route-info { font-size: 0.95em; color: #5f6368; margin-bottom: 20px; font-weight: 600; }
+        h1 { margin: 0; font-size: 2.5em; letter-spacing: -0.02em; }
+        .one-sentence-rule { background: #e8f0fe; color: #1967d2; padding: 15px 25px; border-radius: 12px; font-weight: 600; font-size: 1.1em; margin: 20px 0; border-left: 5px solid #1a73e8; }
         
-        /* The Timeline Component */
-        .timeline { margin: 40px 0; position: relative; padding-left: 30px; }
-        .time-step { position: relative; margin-bottom: 40px; }
+        /* The Timeline */
+        .timeline { margin: 40px 0 20px; position: relative; padding-left: 30px; }
+        .time-step { position: relative; margin-bottom: 30px; }
         .time-step::before { content: ""; position: absolute; left: -30px; top: 5px; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; }
-        .time-step::after { content: ""; position: absolute; left: -25px; top: 25px; width: 2px; height: calc(100% + 15px); background: #eee; }
+        .time-step::after { content: ""; position: absolute; left: -25px; top: 25px; width: 2px; height: calc(100% + 5px); background: #eee; }
         .time-step:last-child::after { display: none; }
-        .time-label { font-weight: 800; font-size: 0.85em; color: var(--primary); text-transform: uppercase; }
+        .time-label { font-weight: 800; font-size: 0.85em; color: var(--primary); text-transform: uppercase; display: block; margin-bottom: 5px; }
         
-        /* Interactive Checklist */
-        .checklist { background: white; padding: 35px; border-radius: 24px; border: 1px solid #dadce0; }
+        .main-content { background: white; padding: 40px; border-radius: 24px; border: 1px solid #dadce0; }
+        .checklist h2 { margin-top: 0; }
         .todo-item { display: flex; align-items: flex-start; padding: 15px 0; border-bottom: 1px solid #f1f3f4; cursor: pointer; }
-        .todo-item input { margin: 5px 15px 0 0; width: 20px; height: 20px; }
+        .todo-item input { margin: 5px 15px 0 0; width: 20px; height: 20px; cursor: pointer; }
         .todo-item input:checked + span { text-decoration: line-through; color: #9aa0a6; }
 
-        .cta-sidebar { background: var(--primary); color: white; padding: 30px; border-radius: 24px; position: sticky; top: 100px; }
-        .cta-btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; margin-top: 15px; }
+        .cta-sidebar { background: var(--primary); color: white; padding: 30px; border-radius: 24px; position: sticky; top: 80px; text-align: center; }
+        .cta-btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; font-size: 1.05em; cursor: pointer; margin-top: 15px; transition: 0.2s; }
+        .cta-btn:hover { transform: translateY(-2px); }
+        .footer { grid-column: 1 / -1; text-align: center; padding: 40px; color: #70757a; font-size: 0.9em; }
     </style>
 </head>
 <body>
-    <div class="nav-bar"><a href="/">Home</a> / <a href="/usa/">USA</a> / <a href="/usa/from-thailand/">Thailand</a></div>
+    <div class="nav-bar"><a href="/">Route Finder</a> / <a href="#">USA</a> / Thailand</div>
     <div class="container">
         <div class="dashboard-header">
-            <div class="route-info">Thailand → USA | Pet: Cat | Risk: Standard</div>
+            <div class="route-info">Route: Thailand → USA &nbsp;|&nbsp; Pet: Cat &nbsp;|&nbsp; Risk: Standard</div>
             <h1>Bring a Cat from Thailand to the USA (2026)</h1>
-            <div class="one-sentence-rule">Traveling from Thailand with a cat is currently classified as Standard risk. Follow these 4 essential steps.</div>
+            <div class="one-sentence-rule">Traveling from Thailand to USA with a cat is currently classified as Standard Risk. Follow these essential steps.</div>
             
             <div class="timeline">
-                <div class="time-step"><span class="time-label">T-6 Months</span><div>Rabies Vaccination & Microchip</div></div>
-                <div class="time-step"><span class="time-label">T-1 Month</span><div>Titer Test (if applicable)</div></div>
+                <div class="time-step"><span class="time-label">T-6 Months</span><div>Rabies Vaccination & ISO Microchip</div></div>
+                <div class="time-step"><span class="time-label">T-1 Month</span><div>Titer Test & CDC Import Form (if applicable)</div></div>
                 <div class="time-step"><span class="time-label">T-7 Days</span><div>Government Health Certificate Endorsement</div></div>
-                <div class="time-step"><span class="time-label">Arrival</span><div>Customs Declaration</div></div>
+                <div class="time-step"><span class="time-label">Arrival</span><div>Customs Declaration at Port of Entry</div></div>
             </div>
         </div>
 
@@ -54,23 +57,24 @@
                 <h2>Interactive Checklist</h2>
                 <label class="todo-item"><input type="checkbox"><span>ISO 11784/11785 Microchip</span></label>
                 <label class="todo-item"><input type="checkbox"><span>Rabies Vaccination Certificate</span></label>
-                <label class="todo-item"><input type="checkbox"><span>CDC Dog Import Form (for 2026)</span></label>
-                <label class="todo-item"><input type="checkbox"><span>Airline Approved Crate</span></label>
+                <label class="todo-item"><input type="checkbox"><span>CDC Dog Import Form (Required 2026)</span></label>
+                <label class="todo-item"><input type="checkbox"><span>Airline Approved Travel Crate</span></label>
             </div>
-            <div style="background:white; padding:40px; border-radius:24px; border:1px solid #dadce0; margin-top:30px;">
-                <h2>Deep Guide</h2>
-                <div class="content"><p>Bringing a cat from Thailand requires an ISO microchip and a rabies certificate. Visit the Animal Quarantine Station at Suvarnabhumi Airport (BKK) 1-3 days before departure to get your export license. No CDC permit or US quarantine is needed for cats arriving from Thailand.</p></div>
+            <div style="margin-top:40px; padding-top:40px; border-top:1px solid #eee;">
+                <h2>Detailed Regulations</h2>
+                <div style="line-height:1.8; font-size:1.1em; color:#3c4043;"><p>Bringing a cat from Thailand requires an ISO microchip and a rabies certificate. Visit the Animal Quarantine Station at Suvarnabhumi Airport (BKK) 1-3 days before departure to get your export license. No CDC permit or US quarantine is needed for cats arriving from Thailand.</p></div>
             </div>
         </div>
 
         <aside class="sidebar">
             <div class="cta-sidebar">
-                <h3>Share My Guide</h3>
-                <p>Generate a customized poster for Xiaohongshu.</p>
-                <button class="cta-btn" style="background:#ff2442; color:white;">Generate Poster 图</button>
-                <button class="cta-btn" onclick="window.print()" style="background:white; color:var(--primary); margin-top:10px;">Download PDF</button>
+                <h3 style="margin-top:0;">Need 1-on-1 Help?</h3>
+                <p style="font-size:0.9em; opacity:0.9; margin-bottom:25px;">Avoid customs rejection. Have an expert handle your 2026 paperwork.</p>
+                <button class="cta-btn" style="background:white; color:var(--primary);">Consult an Expert</button>
+                <button class="cta-btn" onclick="window.print()" style="background:rgba(255,255,255,0.2); color:white;">Download PDF Guide</button>
             </div>
         </aside>
+        <div class="footer">© 2026 Pet Entry Guide. High-precision relocation data.</div>
     </div>
 </body>
 </html>
