@@ -10,7 +10,6 @@
     
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        /* 自定义 details 折叠面板过渡动画 */
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
     </style>
@@ -29,54 +28,64 @@
             <p class="text-xl text-gray-500 mb-10">Select origin and destination to generate your 2026 checklist.</p>
             
             <div class="bg-white p-3 rounded-2xl border border-gray-300 shadow-xl flex flex-col md:flex-row gap-3 items-center max-w-3xl mx-auto">
-                <select class="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-lg font-medium rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>From: China</option>
+                <select id="sel-origin" class="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-lg font-medium rounded-xl px-4 py-3 outline-none">
+                    <option value="" disabled selected>Select Origin</option>
+                    <option value="china">China</option><option value="japan">Japan</option>
                 </select>
-                <select class="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-lg font-medium rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>To: USA</option>
+                <select id="sel-dest" class="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-lg font-medium rounded-xl px-4 py-3 outline-none">
+                    <option value="usa">To: USA</option>
                 </select>
-                <select class="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-lg font-medium rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Pet: Dog</option>
-                    <option>Pet: Cat</option>
+                <select id="sel-pet" class="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-lg font-medium rounded-xl px-4 py-3 outline-none">
+                    <option value="dog">Pet: Dog</option>
+                    <option value="cat">Pet: Cat</option>
                 </select>
-                <button class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition shadow-md">Get Guide</button>
+                <button onclick="getGuide()" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl cursor-pointer">Get Guide</button>
             </div>
         </div>
     </div>
-
     <div class="max-w-5xl mx-auto px-6 py-16">
         <h2 class="text-2xl font-bold text-gray-900 mb-8">Popular Routes</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            
         <a href="/usa/from-china/cat/" class="block bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-blue-400 transition duration-200">
-            <h3 class="text-xl font-extrabold text-gray-900 mb-4">China ➔ USA (Cat)</h3>
+            <h3 class="text-xl font-extrabold text-gray-900 mb-4 uppercase">china ➔ usa (cat)</h3>
             <div class="flex flex-col space-y-2">
                 <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border bg-green-50 text-green-700 border-green-200 w-max">Standard</span>
                 <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200 w-max">30 Days Prep</span>
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200 w-max">Permit: Required</span>
             </div>
         </a>
         
         <a href="/usa/from-china/dog/" class="block bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-blue-400 transition duration-200">
-            <h3 class="text-xl font-extrabold text-gray-900 mb-4">China ➔ USA (Dog)</h3>
+            <h3 class="text-xl font-extrabold text-gray-900 mb-4 uppercase">china ➔ usa (dog)</h3>
             <div class="flex flex-col space-y-2">
                 <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border bg-red-50 text-red-700 border-red-200 w-max">High-Risk</span>
                 <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200 w-max">6 Months Prep</span>
-                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200 w-max">Permit: Required</span>
             </div>
         </a>
         
+        <a href="/usa/from-japan/cat/" class="block bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-blue-400 transition duration-200">
+            <h3 class="text-xl font-extrabold text-gray-900 mb-4 uppercase">japan ➔ usa (cat)</h3>
+            <div class="flex flex-col space-y-2">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border bg-green-50 text-green-700 border-green-200 w-max">Easy</span>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200 w-max">30 Days Prep</span>
+            </div>
+        </a>
         </div>
     </div>
+    <script>
+        function getGuide() {
+            const o = document.getElementById('sel-origin').value;
+            const d = document.getElementById('sel-dest').value;
+            const p = document.getElementById('sel-pet').value;
+            if(o && d && p) window.location.href = '/' + d + '/from-' + o + '/' + p + '/';
+        }
+    </script>
     
     <footer class="bg-white border-t border-gray-200 mt-16 py-12 text-center">
         <div class="max-w-3xl mx-auto px-6">
             <p class="text-sm text-gray-500 mb-4 font-medium">
                 ⚠️ 当前规则基于 2026 年已知海关条例，政策存在随时调整概率，请在预订机票前通过官方渠道复核。
             </p>
-            <p class="text-xs text-gray-400">
-                &copy; 2026 PetEntryGuide. A Growth-Oriented Knowledge Base.
-            </p>
+            <p class="text-xs text-gray-400">&copy; 2026 PetEntryGuide. A Growth-Oriented Knowledge Base.</p>
         </div>
     </footer>
 </body>
